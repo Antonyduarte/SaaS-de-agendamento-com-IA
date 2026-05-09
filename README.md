@@ -41,7 +41,7 @@ Este projeto fornece uma base para um sistema de agendamentos com:
    ```
 2. Entre na pasta do projeto
    ```bash
-   cd "c:/Users/opton/Documents/Node/Sistema de agendamento com IA"
+   cd "c:/Users/Sistema de agendamento com IA"
    ```
 3. Instale as dependências
    ```bash
@@ -53,9 +53,9 @@ Este projeto fornece uma base para um sistema de agendamentos com:
 Crie um arquivo `.env` na raiz com as seguintes variáveis:
 
 ```env
-SERVER_PORT=3000
-DB_HOST=localhost
-DB_PORT=3306
+SERVER_PORT=sua_port
+DB_HOST=sua_host
+DB_PORT=sua_db_port
 DB_USER=seu_usuario
 DB_PASS=sua_senha
 DB_NAME=seu_banco
