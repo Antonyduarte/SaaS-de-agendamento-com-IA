@@ -37,7 +37,7 @@ Este projeto fornece uma base para um sistema de agendamentos com:
 
 1. Clone o repositório
    ```bash
-   git clone <url-do-repositorio>
+   git clone <https://github.com/Antonyduarte/SaaS-de-agendamento-com-IA.git>
    ```
 2. Entre na pasta do projeto
    ```bash
