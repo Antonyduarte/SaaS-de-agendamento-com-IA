@@ -1,0 +1,51 @@
+require("dotenv").config()
+const jwt = require("jsonwebtoken")
+const apiRes = require("../utils/apiRes")
+
+function authMiddleware(req, res, next) {
+    const authHeader = req.headers.authorization
+
+    if(!authHeader) { //Verifica se o token foi enviado ao header
+        return res.status(401).json(apiRes.apiResponse(
+            false,
+            "Token inválido"
+        ))
+    }
+    // Bearer token aqui
+    const parts = authHeader.split(" ")
+
+    if(parts.length !== 2) {
+        return res.status(401).json(apiRes.apiResponse(
+            false,
+            "Token inválido"
+        ))
+    }
+
+    const [ scheme, token ] = parts
+
+    if(scheme !== "Bearer") { // Verifica se começa com "Bearer"
+        return res.status(401).json(apiRes.apiResponse(
+            false,
+            "Formato inválido"
+        ))
+    }
+
+    try { // Verifica e decodifica o token
+        const decoded = jwt.verify(
+            token,
+            process.env.SECRET_KEY
+        )
+        //salva os dados do usuario na requisição
+        req.user = decoded
+
+        next()
+
+    } catch (error) {
+        return res.status(401).json(apiRes.apiResponse(
+            false,
+            "Token inválido, ou expirado"
+        ))
+    }
+}
+
+module.exports = authMiddleware

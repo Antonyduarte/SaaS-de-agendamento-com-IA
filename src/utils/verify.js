@@ -1,4 +1,4 @@
-const responses = require("../../../utils/apiRes")
+const responses = require("./apiRes")
 
 function verify(req, res, next) {
     const { nome, email, senha } = req.body

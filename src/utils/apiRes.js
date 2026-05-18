@@ -1,9 +1,8 @@
-function apiResponse(success, message, affectedRows, data = null) {
+function apiResponse(success, message, rows) {
     return {
         success: success,
         message: message,
-        affectedRows: affectedRows,
-        data: data,
+        rows: rows,
         timestamp: new Date().getTime()
     }
 }
