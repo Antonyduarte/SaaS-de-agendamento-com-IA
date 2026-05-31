@@ -23,10 +23,10 @@ function authMiddleware(req, res, next) {
 
     const [ scheme, token ] = parts
 
-    if(scheme !== "Bearer") { // Verifica se começa com "Bearer"
+    if(scheme.toLowerCase() !== "bearer") {  // Verifica se começa com "Bearer"
         return res.status(401).json(apiRes.apiResponse(
             false,
-            "Formato inválido"
+            "Formato de token inválido"
         ))
     }
 

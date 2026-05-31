@@ -8,9 +8,17 @@ app.use(cors({
     origin: "http://localhost:8080"
 }))
 
-
+// Rotas de autenticação
 const authRoutes = require("./modules/users/auth/auth.routes")
 app.use("/auth", authRoutes)
 app.use("/auth", authRoutes)
+
+//Rotas de agendamentos/agenda
+const agendaRoutes = require("./modules/agendamentos/agenda.routes")
+app.use("/agendamento", agendaRoutes)
+app.use("/agendamento", agendaRoutes)
+
+const notFound = require("./middlewares/notFound.middleware")
+app.use(notFound)
 
 module.exports = app
