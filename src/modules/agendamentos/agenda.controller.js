@@ -1,6 +1,7 @@
 const apiRes = require("../../utils/apiRes")
 const agendaService = require("./agenda.service")
 const ERRORS = require("../../error/err")
+//
 
 
 async function agendar(req, res) {
@@ -46,7 +47,7 @@ async function getAgenda(req, res) {
     try {
         const user_id = req.user.id
 
-        const agenda = agendaService.getAgenda(user_id)
+        const agenda = await agendaService.getAgenda(user_id)
 
         return res.status(200).json(agenda)
     } catch (error) {

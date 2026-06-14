@@ -4,6 +4,7 @@ const pool = require("../../config/db/db")
 const connection = pool
 
 // POST - AGENDAR HORARIO
+
 async function agendar(user_id, nome, data, hora) {
 
     let [result] = await connection.query("INSERT INTO agendamentos (user_id, nome, data, hora) VALUES(?, ?, ?, ?)", [user_id, nome, data, hora])
@@ -16,9 +17,11 @@ async function horarioVerify(user_id, data, hora) {
 
     return result[0] || null
 }
+
 // GET - VER AGENDAMENTOS
+
 async function getAgenda(user_id){
-    let [result] = await connection.query("SELECT * FROM agendamentos WHERE user_id = ?", [user_id])
+    let [result] = await connection.query("SELECT user_id, nome, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
 
     return result
 }

@@ -6,9 +6,9 @@ async function login(req, res) {
     try {
         const { email, senha } = req.body
 
-        if(!email || !senha) {
+        if (!email || !senha) {
             return res.status(400).json(apiRes.userResponse(
-                false, 
+                false,
                 "Email e senha são obrigatórios"
             ))
         }
@@ -21,13 +21,13 @@ async function login(req, res) {
             result
         ))
     } catch (error) {
-        if(error.message === ERRORS.USER_NOT_FOUND) {
+        if (error.message === ERRORS.USER_NOT_FOUND) {
             return res.status(401).json(apiRes.apiResponse(
                 false,
                 "Usuário não encontrado"
             ))
         }
-        if(error.message === ERRORS.INVALID_LOGIN) {
+        if (error.message === ERRORS.INVALID_LOGIN) {
             return res.status(401).json(apiRes.apiResponse(
                 false,
                 "Login inválido" // erro atual
@@ -42,4 +42,3 @@ async function login(req, res) {
 }
 
 module.exports = login
- 

@@ -4,5 +4,5 @@ package-lock.json
 package.json
 
 # env
-.env
 !.env.example
+.env
