@@ -21,9 +21,16 @@ async function horarioVerify(user_id, data, hora) {
 // GET - VER AGENDAMENTOS
 
 async function getAgenda(user_id){
-    let [result] = await connection.query("SELECT user_id, nome, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
+    let [result] = await connection.query("SELECT user_id, id, nome, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
 
     return result
 }
 
-module.exports = { agendar, horarioVerify, getAgenda }
+// DELETE - CANCELAR AGENDAMENTO By id
+
+async function deleteAgenda(id, user_id){
+    let [result] = await connection.query("DELETE FROM agendamentos WHERE id = ? AND user_id = ?", [id, user_id])
+
+    return result
+}
+module.exports = { agendar, horarioVerify, getAgenda, deleteAgenda }

@@ -2,6 +2,7 @@ const agendaRepo = require("./agenda.repository")
 const errors = require("../../error/err")
 const ERRORS = require("../../error/err")
 
+// POST agenda
 async function agendar(user_id, nome, data, hora) {
     
     const horarioExiste = await agendaRepo.horarioVerify(user_id, data, hora)
@@ -14,7 +15,7 @@ async function agendar(user_id, nome, data, hora) {
 
     return create
 }
-
+// GET agenda completa
 async function getAgenda(user_id) {
     
     let agendamentos = await agendaRepo.getAgenda(user_id)
@@ -23,5 +24,12 @@ async function getAgenda(user_id) {
     return agendamentos
 
 }
+async function deleteAgenda(id, user_id) {
 
-module.exports = { agendar, getAgenda }
+    let agendaDelete = await agendaRepo.deleteAgenda(id, user_id)
+
+    return agendaDelete
+
+}
+
+module.exports = { agendar, getAgenda, deleteAgenda }

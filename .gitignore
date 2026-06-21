@@ -6,3 +6,7 @@ package.json
 # env
 !.env.example
 .env
+
+#md
+*.md
+!README.md

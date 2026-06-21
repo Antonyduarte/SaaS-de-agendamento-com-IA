@@ -49,6 +49,13 @@ async function getAgenda(req, res) {
 
         const agenda = await agendaService.getAgenda(user_id)
 
+        if(agenda.length === 0) {
+            return res.status(200).json(apiRes.apiResponse(
+                true,
+                "Nenhum registro encontrado"
+            ))
+        }
+
         return res.status(200).json(agenda)
     } catch (error) {
         return res.status(500).json(apiRes.apiResponse(
@@ -58,5 +65,35 @@ async function getAgenda(req, res) {
     }
 
 }
+// DELETE agenda
+async function deleteAgenda(req, res) {
+    try {
+        const user_id = req.user.id
+        const { id } = req.params
 
-module.exports = { agendar, getAgenda }
+        const result = await agendaService.deleteAgenda(id, user_id)
+
+        if(result.affectedRows === 0) {
+            return res.status(404).json(apiRes.apiResponse(
+                false,
+                "Nenhum registro encontrado",
+                null
+            ))
+        }
+        return res.status(200).json(apiRes.apiResponse(
+            true,
+            "Agendamento deletado com sucesso",
+            null
+        ))
+    } catch (error) {
+        return res.status(500).json(
+            apiRes.apiResponse(
+                false,
+                error.message,
+                console.error(error)
+            )
+        )
+    }
+}
+
+module.exports = { agendar, getAgenda, deleteAgenda }
