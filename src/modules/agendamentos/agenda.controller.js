@@ -89,11 +89,38 @@ async function deleteAgenda(req, res) {
         return res.status(500).json(
             apiRes.apiResponse(
                 false,
-                error.message,
+                "Ocorreu um erro interno, tente novamente mais tarde",
                 console.error(error)
             )
         )
     }
 }
+// EDIT AGENDA - PUT
+async function editAgenda(req, res) {
+    try {
 
-module.exports = { agendar, getAgenda, deleteAgenda }
+        const user_id = req.user.id
+        const { id, data, hora } = req.body
+        
+        const result = await agendaService.editAgenda(data, hora, id, user_id)
+
+        if (result.affectedRows <= 0) {
+            return res.status(404).json(apiRes.apiResponse(
+                false,
+                "Agendamento não encontrado",
+                null
+            ))
+        } return res.status(200).json(apiRes.apiResponse(
+            true,
+            "Horário alterado com sucesso"
+        ))
+
+    } catch (error) {
+        return res.status(500).json(apiRes.apiResponse(
+            false,
+            error.message
+        ))
+    }
+}
+
+module.exports = { agendar, getAgenda, deleteAgenda, editAgenda }

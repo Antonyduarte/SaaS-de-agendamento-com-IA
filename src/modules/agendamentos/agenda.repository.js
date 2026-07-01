@@ -33,4 +33,13 @@ async function deleteAgenda(id, user_id){
 
     return result
 }
-module.exports = { agendar, horarioVerify, getAgenda, deleteAgenda }
+
+// PUT - EDITAR AGENDAMENTO
+
+async function editAgenda(data, hora, id , user_id) {
+    
+    let [result] = await connection.query("UPDATE agendamentos SET data = ?, hora = ? WHERE id = ? AND user_id = ?", [data, hora, id, user_id])
+    
+    return result
+}
+module.exports = { agendar, horarioVerify, getAgenda, deleteAgenda, editAgenda }

@@ -13,4 +13,7 @@ router.get("/", authMiddleware, agendaController.getAgenda)
 //DELETE agendamento by id, user_id
 router.delete("/:id", authMiddleware, agendaController.deleteAgenda)
 
+//PUT agendamento
+router.put("/", authMiddleware, agendaController.editAgenda)
+
 module.exports = router

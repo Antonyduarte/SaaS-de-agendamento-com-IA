@@ -24,6 +24,7 @@ async function getAgenda(user_id) {
     return agendamentos
 
 }
+// DELETE AGENDA by id
 async function deleteAgenda(id, user_id) {
 
     let agendaDelete = await agendaRepo.deleteAgenda(id, user_id)
@@ -32,4 +33,12 @@ async function deleteAgenda(id, user_id) {
 
 }
 
-module.exports = { agendar, getAgenda, deleteAgenda }
+// PUT - UPDATE agendamento
+async function editAgenda(data, hora, id, user_id) {
+    
+    let edit = await agendaRepo.editAgenda(data, hora, id, user_id)
+
+    return edit
+}
+
+module.exports = { agendar, getAgenda, deleteAgenda, editAgenda }
