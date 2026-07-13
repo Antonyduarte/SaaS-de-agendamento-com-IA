@@ -1,5 +1,6 @@
 const registerService = require("./register.service")
-const responses = require("../../../utils/apiRes")
+const apiRes = require("../../../utils/apiRes")
+const ERRORS = require("../../../error/err")
 
 async function register(req, res) {
     try {
@@ -7,20 +8,19 @@ async function register(req, res) {
 
         const newUser = await registerService(nome, email, senha)
 
-        return res.status(201).json(responses.apiResponse(true, "Conta registrada com sucesso"))
+        return res.status(201).json(apiRes.apiResponse(true, "Conta registrada com sucesso"))
     }
     catch (error) {
  
         if (error.message === "EMAIL_ALREADY_EXISTS") {
-            return res.status(400).json(responses.apiResponse(
+            return res.status(400).json(apiRes.apiResponse(
                 false,
                 "Email já em uso"
             ))
         } else {
-            return res.status(500).json(responses.apiResponse(
+            return res.status(500).json(apiRes.apiResponse(
                 false,
-                "Ocorreu um erro interno, tente novamente mais tarde",
-                error.message
+                ERRORS.INTERNAL_ERROR_MSG
             ))
         }
     }

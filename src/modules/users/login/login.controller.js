@@ -35,7 +35,7 @@ async function login(req, res) {
         } else {
             return res.status(500).json(apiRes.apiResponse(
                 false,
-                "Erro interno, por favor tente novamente mais tarde"
+                ERRORS.INTERNAL_ERROR_MSG
             ))
         }
     }

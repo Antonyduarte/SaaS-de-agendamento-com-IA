@@ -11,7 +11,7 @@ async function userRegister(nome, email, senha) {
 
     const hashedPass = await bcrypt.hash(senha, 10)
 
-    const user = registerRepo.userRegister(nome, email, hashedPass)
+    const user = await registerRepo.userRegister(nome, email, hashedPass)
 
     return responses.apiResponse(true, "Conta registrada com sucesso")
 }

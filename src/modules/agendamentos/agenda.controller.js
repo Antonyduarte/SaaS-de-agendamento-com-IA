@@ -3,7 +3,6 @@ const agendaService = require("./agenda.service")
 const ERRORS = require("../../error/err")
 //
 
-
 async function agendar(req, res) {
     const { nome, data, hora } = req.body
     if (!nome || !data || !hora) {
@@ -34,7 +33,7 @@ async function agendar(req, res) {
         } else {
             return res.status(500).json(apiRes.apiResponse(
                 false,
-                "Erro interno, tente novamente mais tarde"
+                ERRORS.INTERNAL_ERROR_MSG
             ))
         }
     }
@@ -60,7 +59,7 @@ async function getAgenda(req, res) {
     } catch (error) {
         return res.status(500).json(apiRes.apiResponse(
             false,
-            "Ocorreu um erro interno, por favor tente novamente mais tarde"
+            ERRORS.INTERNAL_ERROR_MSG
         ))
     }
 
@@ -89,8 +88,7 @@ async function deleteAgenda(req, res) {
         return res.status(500).json(
             apiRes.apiResponse(
                 false,
-                "Ocorreu um erro interno, tente novamente mais tarde",
-                console.error(error)
+                ERRORS.INTERNAL_ERROR_MSG
             )
         )
     }
@@ -118,7 +116,7 @@ async function editAgenda(req, res) {
     } catch (error) {
         return res.status(500).json(apiRes.apiResponse(
             false,
-            error.message
+            ERRORS.INTERNAL_ERROR_MSG
         ))
     }
 }

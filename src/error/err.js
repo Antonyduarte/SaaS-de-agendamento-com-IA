@@ -9,7 +9,8 @@ const ERRORS = {
     INVALID_LOGIN: "INVALID_LOGIN",
 
     //INTERNAL SERVER ERROR
-    INTERNAL_ERROR: "INTERNAL_ERROR"
-}
+    INTERNAL_ERROR: "INTERNAL_ERROR",
+    INTERNAL_ERROR_MSG: "Ocorreu um erro interno, tente novamente mais tarde"
+} 
 
 module.exports = ERRORS
