@@ -8,7 +8,7 @@ async function agendar(req, res) {
     if (!nome || !data || !hora) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            "Preencha todos os campos"
+            ERRORS.EMPTY_DATA_MSG
         ))
     }
     const user_id = req.user.id
@@ -100,6 +100,13 @@ async function editAgenda(req, res) {
         const user_id = req.user.id
         const { id, data, hora } = req.body
         
+        if(!id ||!data ||!hora) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                ERRORS.EMPTY_DATA_MSG
+            ))
+        }
+
         const result = await agendaService.editAgenda(data, hora, id, user_id)
 
         if (result.affectedRows <= 0) {

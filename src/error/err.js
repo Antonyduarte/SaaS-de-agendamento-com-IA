@@ -10,7 +10,10 @@ const ERRORS = {
 
     //INTERNAL SERVER ERROR
     INTERNAL_ERROR: "INTERNAL_ERROR",
-    INTERNAL_ERROR_MSG: "Ocorreu um erro interno, tente novamente mais tarde"
+    INTERNAL_ERROR_MSG: "Ocorreu um erro interno, tente novamente mais tarde",
+
+    //EMPTY DATA
+    EMPTY_DATA_MSG: "Certifique-se de preencher todos os campos"
 } 
 
 module.exports = ERRORS
