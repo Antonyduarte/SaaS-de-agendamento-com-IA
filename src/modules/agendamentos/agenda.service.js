@@ -1,11 +1,19 @@
 const agendaRepo = require("./agenda.repository")
-const errors = require("../../error/err")
 const ERRORS = require("../../error/err")
+
+// Dois agendamentos, mesmo de usuarios diferentes, precisam ter este intervalo.
+const intervalo = 35
+const INICIO_EXPEDIENTE = "09:00:00"
+const FIM_EXPEDIENTE = "18:00:00"
 
 // POST agenda
 async function agendar(user_id, nome, data, hora) {
     
-    const horarioExiste = await agendaRepo.horarioVerify(user_id, data, hora)
+    const horarioExiste = await agendaRepo.horarioVerify(
+        data,
+        hora,
+        intervalo
+    )
 
     if(horarioExiste) {
         throw new Error(ERRORS.TIME_CONFLICT)
@@ -14,6 +22,15 @@ async function agendar(user_id, nome, data, hora) {
     const create = await agendaRepo.agendar(user_id, nome, data, hora)
 
     return create
+}
+
+async function getHorariosDisponiveis(data) {
+    return agendaRepo.getHorariosDisponiveis(
+        data,
+        intervalo,
+        INICIO_EXPEDIENTE,
+        FIM_EXPEDIENTE
+    )
 }
 // GET agenda completa
 async function getAgenda(user_id) {
@@ -35,10 +52,20 @@ async function deleteAgenda(id, user_id) {
 
 // PUT - UPDATE agendamento
 async function editAgenda(data, hora, id, user_id) {
-    
+    const horarioExiste = await agendaRepo.horarioVerify(
+        data,
+        hora,
+        intervalo,
+        id
+    )
+
+    if (horarioExiste) {
+        throw new Error(ERRORS.TIME_CONFLICT)
+    }
+
     let edit = await agendaRepo.editAgenda(data, hora, id, user_id)
 
     return edit
 }
 
-module.exports = { agendar, getAgenda, deleteAgenda, editAgenda }
+module.exports = { agendar, getHorariosDisponiveis, getAgenda, deleteAgenda, editAgenda }

@@ -9,7 +9,8 @@ async function userRegister(nome, email, senha) {
         throw new Error("EMAIL_ALREADY_EXISTS")
     }
 
-    const hashedPass = await bcrypt.hash(senha, 10)
+    let saltRounds = 10
+    const hashedPass = await bcrypt.hash(senha, saltRounds)
 
     const user = await registerRepo.userRegister(nome, email, hashedPass)
 

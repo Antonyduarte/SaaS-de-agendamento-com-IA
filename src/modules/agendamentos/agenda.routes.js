@@ -4,6 +4,10 @@ const router = express.Router()
 const authMiddleware = require("../../middlewares/auth.middleware")
 
 const agendaController = require("./agenda.controller")
+
+// Rota pública: mostra somente os horários que podem ser reservados.
+router.get("/disponiveis", agendaController.getHorariosDisponiveis)
+
 //POST agendamento
 router.post("/", authMiddleware, agendaController.agendar)
 

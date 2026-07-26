@@ -1,19 +1,34 @@
 const apiRes = require("../../utils/apiRes")
 const agendaService = require("./agenda.service")
 const ERRORS = require("../../error/err")
-//
+const { HORA_REGEX, DATA_REGEX } = require("../../utils/regex")
 
 async function agendar(req, res) {
     const { nome, data, hora } = req.body
+
+    const horaValida = HORA_REGEX.test(hora)
+    const dataValida = DATA_REGEX.test(data)
+
     if (!nome || !data || !hora) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            ERRORS.EMPTY_DATA_MSG
+            ERRORS.EMPTY_DATA_MSG // Certifique-se de preencher todos os campos
         ))
     }
-    const user_id = req.user.id
+    if (!dataValida) {
+        return res.status(400).json(apiRes.apiResponse(
+            false,
+            ERRORS.INVALID_DATA // Data inválida
+        ))
+    }
+    if (!horaValida) {
+        return res.status(400).json(apiRes.apiResponse(
+            false,
+            ERRORS.INVALID_TIME // Horário inválido
+        ))
+    }
 
-    // console.log("REQ USER: ", req.user)
+    const user_id = req.user.id
 
     try {
         let create = await agendaService.agendar(user_id, nome, data, hora)
@@ -28,7 +43,7 @@ async function agendar(req, res) {
         if (error.message === ERRORS.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                "Horário já agendado por outro usuário"
+                "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
             ))
         } else {
             return res.status(500).json(apiRes.apiResponse(
@@ -36,6 +51,33 @@ async function agendar(req, res) {
                 ERRORS.INTERNAL_ERROR_MSG
             ))
         }
+    }
+}
+
+async function getHorariosDisponiveis(req, res) {
+    const { data } = req.query
+
+    if (!data || !DATA_REGEX.test(data)) {
+        return res.status(400).json(apiRes.apiResponse(
+            false,
+            ERRORS.INVALID_DATA
+        ))
+    }
+
+    try {
+        const horarios = await agendaService.getHorariosDisponiveis(data)
+
+        return res.status(200).json(apiRes.apiResponse(
+            true,
+            "Horários disponíveis",
+            horarios
+        ))
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json(apiRes.apiResponse(
+            false,
+            ERRORS.INTERNAL_ERROR_MSG
+        ))
     }
 }
 
@@ -48,7 +90,7 @@ async function getAgenda(req, res) {
 
         const agenda = await agendaService.getAgenda(user_id)
 
-        if(agenda.length === 0) {
+        if (agenda.length === 0) {
             return res.status(200).json(apiRes.apiResponse(
                 true,
                 "Nenhum registro encontrado"
@@ -72,7 +114,7 @@ async function deleteAgenda(req, res) {
 
         const result = await agendaService.deleteAgenda(id, user_id)
 
-        if(result.affectedRows === 0) {
+        if (result.affectedRows === 0) {
             return res.status(404).json(apiRes.apiResponse(
                 false,
                 "Nenhum registro encontrado",
@@ -99,11 +141,25 @@ async function editAgenda(req, res) {
 
         const user_id = req.user.id
         const { id, data, hora } = req.body
-        
-        if(!id ||!data ||!hora) {
+
+        if (!id || !data || !hora) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
                 ERRORS.EMPTY_DATA_MSG
+            ))
+        }
+
+        if (!DATA_REGEX.test(data)) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                ERRORS.INVALID_DATA
+            ))
+        }
+
+        if (!HORA_REGEX.test(hora)) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                ERRORS.INVALID_TIME
             ))
         }
 
@@ -121,6 +177,13 @@ async function editAgenda(req, res) {
         ))
 
     } catch (error) {
+        if (error.message === ERRORS.TIME_CONFLICT) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
+            ))
+        }
+
         return res.status(500).json(apiRes.apiResponse(
             false,
             ERRORS.INTERNAL_ERROR_MSG
@@ -128,4 +191,4 @@ async function editAgenda(req, res) {
     }
 }
 
-module.exports = { agendar, getAgenda, deleteAgenda, editAgenda }
+module.exports = { agendar, getHorariosDisponiveis, getAgenda, deleteAgenda, editAgenda }

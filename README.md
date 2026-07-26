@@ -117,6 +117,8 @@ Use essa regra se cada usuario nao puder repetir o mesmo horario. Se o sistema d
 UNIQUE KEY unique_schedule_slot (data, hora)
 ```
 
+O codigo tambem valida um intervalo de 35 minutos entre quaisquer dois agendamentos. Assim, depois de um horario `13:00`, os proximos horarios disponiveis comecam em `13:35`. Para alterar esse valor, ajuste `INTERVALO_ENTRE_AGENDAMENTOS_EM_MINUTOS` em `src/modules/agendamentos/agenda.service.js`.
+
 ## Como Executar
 
 ```bash

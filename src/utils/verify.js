@@ -1,8 +1,8 @@
 const responses = require("./apiRes")
+const { NOME_REGEX, EMAIL_REGEX } = require("./regex")
 
 function verify(req, res, next) {
     const { nome, email, senha } = req.body
-    const nomeRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
     //nome
     if(!nome || nome.trim() === "") {
         return res.status(400).json(responses.apiResponse(
@@ -10,22 +10,20 @@ function verify(req, res, next) {
             "Preencha o campo 'Nome'"
         ))
     }
-    if(!nomeRegex.test(nome) || typeof nome !== "string") {
+    if(typeof nome !== "string" || !NOME_REGEX.test(nome)) {
         return res.status(400).json(responses.apiResponse(
             false,
             "O nome deve conter apenas letras, acentos e espaços"
         ))
     }
     //Email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
     if(!email || email.trim() === "") {
         return res.status(400).json(responses.apiResponse(
             false, 
             "Preencha o campo 'Email'"
         ))
     }
-    if (!emailRegex.test(email)) {
+    if (!EMAIL_REGEX.test(email)) {
         return res.status(400).json(responses.apiResponse(
             false,
             "Email inválido"
