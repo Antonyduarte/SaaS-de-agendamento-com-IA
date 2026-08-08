@@ -1,5 +1,5 @@
 const agendaRepo = require("./agenda.repository")
-const ERRORS = require("../../error/err")
+const { MESSAGES } = require("../../messages/messages")
 
 // Dois agendamentos, mesmo de usuarios diferentes, precisam ter este intervalo.
 const intervalo = 35
@@ -16,7 +16,7 @@ async function agendar(user_id, nome, data, hora) {
     )
 
     if(horarioExiste) {
-        throw new Error(ERRORS.TIME_CONFLICT)
+        throw new Error(MESSAGES.TIME_CONFLICT)
     }
 
     const create = await agendaRepo.agendar(user_id, nome, data, hora)
@@ -60,7 +60,7 @@ async function editAgenda(data, hora, id, user_id) {
     )
 
     if (horarioExiste) {
-        throw new Error(ERRORS.TIME_CONFLICT)
+        throw new Error(MESSAGES.TIME_CONFLICT)
     }
 
     let edit = await agendaRepo.editAgenda(data, hora, id, user_id)

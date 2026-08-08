@@ -1,6 +1,6 @@
 const registerService = require("./register.service")
 const apiRes = require("../../../utils/apiRes")
-const ERRORS = require("../../../error/err")
+const { MESSAGES } = require("../../../messages/messages")
 
 async function register(req, res) {
     try {
@@ -20,7 +20,7 @@ async function register(req, res) {
         } else {
             return res.status(500).json(apiRes.apiResponse(
                 false,
-                ERRORS.INTERNAL_ERROR_MSG
+                MESSAGES.INTERNAL_ERROR_MSG
             ))
         }
     }

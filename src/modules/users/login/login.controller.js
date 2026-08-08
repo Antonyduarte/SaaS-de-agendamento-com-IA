@@ -1,6 +1,6 @@
 const loginService = require("./login.service")
 const apiRes = require("../../../utils/apiRes")
-const ERRORS = require("../../../error/err")
+const { MESSAGES } = require("../../../messages/messages")
 
 async function login(req, res) {
     try {
@@ -21,13 +21,13 @@ async function login(req, res) {
             result
         ))
     } catch (error) {
-        if (error.message === ERRORS.USER_NOT_FOUND) {
+        if (error.message === MESSAGES.USER_NOT_FOUND) {
             return res.status(401).json(apiRes.apiResponse(
                 false,
                 "Usuário não encontrado"
             ))
         }
-        if (error.message === ERRORS.INVALID_LOGIN) {
+        if (error.message === MESSAGES.INVALID_LOGIN) {
             return res.status(401).json(apiRes.apiResponse(
                 false,
                 "Login inválido" // erro atual
@@ -35,7 +35,7 @@ async function login(req, res) {
         } else {
             return res.status(500).json(apiRes.apiResponse(
                 false,
-                ERRORS.INTERNAL_ERROR_MSG
+                MESSAGES.INTERNAL_ERROR_MSG
             ))
         }
     }

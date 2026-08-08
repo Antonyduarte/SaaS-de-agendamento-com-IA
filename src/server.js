@@ -3,9 +3,7 @@ const app = require("./app")
 
 const PORT = process.env.SERVER_PORT || 3000
 
+console.log("Starting server...")
 app.listen(PORT, () => {
-    console.log("Starting server...")
-    setTimeout(() => {
-        console.log(`Server is running on port: ${PORT}`)
-    }, 1100);
+    console.log(`Server running in port: ${PORT}`)
 })

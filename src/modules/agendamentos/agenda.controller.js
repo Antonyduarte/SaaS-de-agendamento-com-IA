@@ -1,6 +1,6 @@
 const apiRes = require("../../utils/apiRes")
 const agendaService = require("./agenda.service")
-const ERRORS = require("../../error/err")
+const { MESSAGES } = require("../../messages/messages")
 const { HORA_REGEX, DATA_REGEX } = require("../../utils/regex")
 
 async function agendar(req, res) {
@@ -12,19 +12,19 @@ async function agendar(req, res) {
     if (!nome || !data || !hora) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            ERRORS.EMPTY_DATA_MSG // Certifique-se de preencher todos os campos
+            MESSAGES.EMPTY_DATA_MSG // Certifique-se de preencher todos os campos
         ))
     }
     if (!dataValida) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            ERRORS.INVALID_DATA // Data inválida
+            MESSAGES.INVALID_DATA // Data inválida
         ))
     }
     if (!horaValida) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            ERRORS.INVALID_TIME // Horário inválido
+            MESSAGES.INVALID_TIME // Horário inválido
         ))
     }
 
@@ -40,7 +40,7 @@ async function agendar(req, res) {
     } catch (error) {
         console.error(error);
 
-        if (error.message === ERRORS.TIME_CONFLICT) {
+        if (error.message === MESSAGES.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
                 "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
@@ -48,7 +48,7 @@ async function agendar(req, res) {
         } else {
             return res.status(500).json(apiRes.apiResponse(
                 false,
-                ERRORS.INTERNAL_ERROR_MSG
+                MESSAGES.INTERNAL_ERROR_MSG
             ))
         }
     }
@@ -60,7 +60,7 @@ async function getHorariosDisponiveis(req, res) {
     if (!data || !DATA_REGEX.test(data)) {
         return res.status(400).json(apiRes.apiResponse(
             false,
-            ERRORS.INVALID_DATA
+            MESSAGES.INVALID_DATA
         ))
     }
 
@@ -76,7 +76,7 @@ async function getHorariosDisponiveis(req, res) {
         console.error(error)
         return res.status(500).json(apiRes.apiResponse(
             false,
-            ERRORS.INTERNAL_ERROR_MSG
+            MESSAGES.INTERNAL_ERROR_MSG
         ))
     }
 }
@@ -101,7 +101,7 @@ async function getAgenda(req, res) {
     } catch (error) {
         return res.status(500).json(apiRes.apiResponse(
             false,
-            ERRORS.INTERNAL_ERROR_MSG
+            MESSAGES.INTERNAL_ERROR_MSG
         ))
     }
 
@@ -130,7 +130,7 @@ async function deleteAgenda(req, res) {
         return res.status(500).json(
             apiRes.apiResponse(
                 false,
-                ERRORS.INTERNAL_ERROR_MSG
+                MESSAGES.INTERNAL_ERROR_MSG
             )
         )
     }
@@ -145,21 +145,21 @@ async function editAgenda(req, res) {
         if (!id || !data || !hora) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                ERRORS.EMPTY_DATA_MSG
+                MESSAGES.EMPTY_DATA_MSG
             ))
         }
 
         if (!DATA_REGEX.test(data)) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                ERRORS.INVALID_DATA
+                MESSAGES.INVALID_DATA
             ))
         }
 
         if (!HORA_REGEX.test(hora)) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                ERRORS.INVALID_TIME
+                MESSAGES.INVALID_TIME
             ))
         }
 
@@ -177,7 +177,7 @@ async function editAgenda(req, res) {
         ))
 
     } catch (error) {
-        if (error.message === ERRORS.TIME_CONFLICT) {
+        if (error.message === MESSAGES.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
                 "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
@@ -186,7 +186,7 @@ async function editAgenda(req, res) {
 
         return res.status(500).json(apiRes.apiResponse(
             false,
-            ERRORS.INTERNAL_ERROR_MSG
+            MESSAGES.INTERNAL_ERROR_MSG
         ))
     }
 }
