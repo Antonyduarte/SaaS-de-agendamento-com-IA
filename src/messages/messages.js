@@ -16,12 +16,9 @@ const MESSAGES = {
     INTERNAL_ERROR_MSG: "Ocorreu um erro interno, tente novamente mais tarde",
     
     //EMPTY DATA
-    EMPTY_DATA_MSG: "Certifique-se de preencher todos os campos"
+    EMPTY_DATA_MSG: "Certifique-se de preencher todos os campos",
+    // FORGOT PASSWORD MESSAGE
+    FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo"
 } 
 
-const MSG = {
-    // Mensagem para recovey password
-    FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo"
-}
-
-module.exports = { MESSAGES, MSG}
+module.exports = { MESSAGES }

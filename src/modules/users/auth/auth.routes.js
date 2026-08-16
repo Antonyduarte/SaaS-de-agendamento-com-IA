@@ -4,8 +4,11 @@ const verify = require("../../../utils/verify")
 
 const loginController = require("../login/login.controller")
 const registerController = require("../register/register.controller")
+const { recoveryCode: forgotPassController } = require("./forgotpassword/forgotPass.controller")
 
-router.post("/login", loginController)
-router.post("/register", verify, registerController)
+router.post("/login", loginController) // endpoint de login 
+router.post("/register", verify, registerController) // endpoint de registro
+router.post("/forgot-password", forgotPassController) // endpoint de forgotpassword
+
 
 module.exports = router

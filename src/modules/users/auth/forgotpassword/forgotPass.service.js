@@ -1,13 +1,36 @@
-const forgotRepo = require("./forgotPass.repository")
+const forgotRepo = require("./forgotPass.repository");
+const { randomInt } = require("crypto");
+const { MESSAGES } = require("../../../../messages/messages");
+const mailer = require("../../../../config/mail/mailerSend");
+const { EMAIL_REGEX } = require("../../../../utils/regex");
 
-async function postRecovery(email) {
+// function generateCode()
 
-    const user = await forgotRepo.postRecoveryPass(email)
-    if(!user) {
-        throw new Error("MAIL_NOT_FOUND")
-    }
+async function recoveryCode(email) {
+  
+  if (!email) {
+    throw Error(MESSAGES.EMPTY_DATA_MSG);
+  }
 
-    return user
+  if (!EMAIL_REGEX.test(email)) {
+    throw Error(MESSAGES.REGEX_MAIL);
+  }
+
+  const user = await forgotRepo.userEmail(email)
+
+  if (!user) {
+    return null;
+  }
+  // Gera o código !! LEMBRETE ==== HASHEAR CÓDIGO DEPOOIS
+
+  const code = randomInt(100000, 1000000);
+
+  // Salva o código e usuário no banco
+  await forgotRepo.recoveryCode(user.id, code);
+
+  await mailer.sendCode(email, code);
+
+  return true
 }
 
-module.exports = { postRecovery }
+module.exports = { recoveryCode };
