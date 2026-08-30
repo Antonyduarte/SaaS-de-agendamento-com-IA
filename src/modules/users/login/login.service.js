@@ -13,7 +13,7 @@ async function userLogin(email, senha) {
     }
 
 
-    const passVerify = await bcrypt.compare(senha, user.senha) // compara a SENHA, com a USER.SENHA criptografada no banco
+    const passVerify = await bcrypt.compare(senha, user.password) // compara a senha enviada com a senha criptografada no banco
 
     if (!passVerify) {
         throw new Error(MESSAGES.INVALID_LOGIN)

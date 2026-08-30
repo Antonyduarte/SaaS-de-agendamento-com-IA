@@ -1,5 +1,5 @@
 const mysql = require("mysql2")
-const pool = require("../../../../config/db/db")
+const pool = require("../../../config/db/db")
 
 const connection = pool
 

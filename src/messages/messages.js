@@ -18,7 +18,9 @@ const MESSAGES = {
     //EMPTY DATA
     EMPTY_DATA_MSG: "Certifique-se de preencher todos os campos",
     // FORGOT PASSWORD MESSAGE
-    FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo"
+    FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo",
+    //RESET PASSWORD
+    UNVAILABLE_CODE: "Código expirado ou inválido"
 } 
 
 module.exports = { MESSAGES }

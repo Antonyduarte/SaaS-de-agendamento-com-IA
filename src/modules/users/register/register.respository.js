@@ -12,7 +12,7 @@ async function findByEmail(email) {
 
 async function userRegister(nome, email, senha) {
 
-    const [result] = await connection.query("INSERT INTO clientes(nome, email, senha) VALUES(?, ?, ?)", [nome, email, senha])
+    const [result] = await connection.query("INSERT INTO clientes(nome, email, password) VALUES(?, ?, ?)", [nome, email, senha])
 
     return result[0] || null
 }

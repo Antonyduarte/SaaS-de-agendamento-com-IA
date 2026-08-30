@@ -6,10 +6,9 @@ function sendCode(userMail, code) {
     from: process.env.MAIL_USER,
     to: userMail,
     subject: "Código de verificação",
-    text: forgotService.recoveryCode[code]
+    text: `Seu código de verificação para recuperar sua conta é ${code}`
   })
 }
-
 // const sendCode = transporter.sendMail({
 //   from: process.env.MAIL_USER,
 //   to: "antonyrafael3214@gmail.com",
