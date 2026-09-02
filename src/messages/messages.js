@@ -20,7 +20,8 @@ const MESSAGES = {
     // FORGOT PASSWORD MESSAGE
     FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo",
     //RESET PASSWORD
-    UNVAILABLE_CODE: "Código expirado ou inválido"
+    UNVAILABLE_CODE: "Código expirado ou inválido",
+    PASSWORD_ALTERED: "Senha alterada com sucesso"
 } 
 
 module.exports = { MESSAGES }

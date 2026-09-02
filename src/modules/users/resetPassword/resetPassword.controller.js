@@ -1,6 +1,35 @@
 const resetService = require("./resetPassword.service")
+const apiRes = require("../../../utils/apiRes")
+const {MESSAGES} = require("../../../messages/messages")
 
 async function setPassword(req, res) {
-    const { email, code, password } = req.body
-    
+    try {
+        const { email, code, password } = req.body
+        
+        await resetService.resetPassword(email, code, password)
+
+        return res.status(200).json(apiRes.apiResponse(
+            true,
+            MESSAGES.PASSWORD_ALTERED
+        ))
+
+    } catch (error) {
+        if(error.message === MESSAGES.EMPTY_DATA_MSG ||
+            error.message === MESSAGES.REGEX_MAIL ||
+            error.message === MESSAGES.UNVAILABLE_CODE ||
+            error.message === MESSAGES.USER_NOT_FOUND
+        ) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                error.message
+            ))
+        }
+        return res.status(500).json(apiRes.apiResponse(
+            false,
+            MESSAGES.INTERNAL_ERROR_MSG
+        ))
+    }
+
 }
+
+module.exports = { setPassword }
