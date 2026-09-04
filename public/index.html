@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#5b5ce2">
+    <title>AgendaFlow — Agendamentos simples</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <main class="shell">
+      <section id="auth-view" class="auth-layout">
+        <article class="brand-panel">
+          <a class="logo" href="#"><span>✦</span> AgendaFlow</a>
+
+          <div class="hero-copy">
+            <p class="eyebrow">ORGANIZE O QUE IMPORTA</p>
+            <h1>Seu tempo merece <em>leveza.</em></h1>
+            <p>Uma agenda simples, bonita e feita para deixar sua rotina no controle.</p>
+          </div>
+
+          <div class="feature">
+            <span>✓</span>
+            <div>
+              <strong>Agenda sem conflitos</strong>
+              <small>Horários protegidos automaticamente.</small>
+            </div>
+          </div>
+        </article>
+
+        <section class="auth-card">
+          <div class="auth-heading">
+            <p class="eyebrow">BEM-VINDO</p>
+            <h2 id="auth-title">Entre na sua conta</h2>
+            <p id="auth-subtitle">Acesse sua agenda e acompanhe seus horários.</p>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-auth="login">Entrar</button>
+            <button class="tab" data-auth="register">Criar conta</button>
+          </div>
+
+          <form id="login-form" class="form" novalidate>
+            <label>
+              E-mail
+              <input type="email" name="email" placeholder="voce@email.com" required autocomplete="off" >
+            </label>
+            <label>
+              Senha
+              <div class="password-field">
+                <input type="password" name="senha" placeholder="Sua senha" required autocomplete="off">
+                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
+              </div>
+            </label>
+            <button type="button" class="text-button" data-view="forgot">Esqueci minha senha</button>
+            <button class="primary-button" type="submit">Entrar <span>→</span></button>
+          </form>
+
+          <form id="register-form" class="form hidden" novalidate>
+            <label>
+              Nome completo
+              <input type="text" name="nome" placeholder="Como podemos te chamar?" required autocomplete="off" >
+            </label>
+            <label>
+              E-mail
+              <input type="email" name="email" placeholder="voce@email.com" required autocomplete="off">
+            </label>
+            <label>
+              Senha
+              <div class="password-field">
+                <input type="password" name="senha" placeholder="Crie uma senha segura" required minlength="6" autocomplete="off">
+                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
+              </div>
+            </label>
+            <button class="primary-button" type="submit">Criar minha conta <span>→</span></button>
+          </form>
+
+          <form id="forgot-form" class="form hidden" novalidate>
+            <button type="button" class="back-button" data-view="login">← Voltar para entrar</button>
+            <label>
+              E-mail cadastrado
+              <input type="email" name="email" placeholder="seuemail@email.com" required autocomplete="off">
+            </label>
+            <button class="primary-button" type="submit">Enviar código <span>→</span></button>
+          </form>
+
+          <form id="reset-form" class="form hidden">
+            <button type="button" class="back-button" data-view="login">← Voltar para entrar</button>
+            <p class="form-hint">Enviamos um código de 6 dígitos. Use o último código solicitado.</p>
+            <label>
+              Código de recuperação
+              <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required>
+            </label>
+            <label>
+              Nova senha
+              <div class="password-field">
+                <input type="password" name="password" placeholder="Sua nova senha" required minlength="6" autocomplete="off">
+                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
+              </div>
+            </label>
+            <button class="primary-button" type="submit">Redefinir senha <span>→</span></button>
+          </form>
+        </section>
+      </section>
+
+      <section id="dashboard-view" class="dashboard hidden">
+        <header class="dashboard-header">
+          <a class="logo" href="#"><span>✦</span> AgendaFlow</a>
+          <div class="header-actions">
+            <span id="today-label"></span>
+            <a id="admin-button" class="outline-button hidden" href="/admin.html">Administração</a>
+            <button id="logout-button" class="outline-button">Sair</button>
+          </div>
+        </header>
+
+        <div class="dashboard-intro">
+          <div>
+            <p class="eyebrow">MINHA ROTINA</p>
+            <h1>Olá! Vamos organizar<br>o seu <em>dia?</em></h1>
+          </div>
+          <button id="new-appointment-button" class="primary-button">+ Novo agendamento</button>
+        </div>
+
+        <section class="dashboard-grid">
+          <article class="appointments-card">
+            <div class="card-heading">
+              <div>
+                <h2>Seus agendamentos</h2>
+                <p id="appointments-count">Carregando agenda...</p>
+              </div>
+              <button id="refresh-button" class="icon-button" title="Atualizar">↻</button>
+            </div>
+            <div id="appointments-list" class="appointments-list"></div>
+          </article>
+
+          <aside class="tips-card">
+            <span class="tip-icon">✦</span>
+            <h3>Seu tempo, do seu jeito.</h3>
+            <p>Os horários têm um intervalo de 35 minutos para que sua agenda fique sempre equilibrada.</p>
+            <div class="tip-line"></div>
+            <small>Disponível de 09:00 às 18:00</small>
+          </aside>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="appointment-modal" class="modal">
+      <form id="appointment-form" class="modal-card">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow" id="modal-eyebrow">NOVO HORÁRIO</p>
+            <h2 id="modal-title">Adicionar agendamento</h2>
+          </div>
+          <button type="button" class="close-modal" aria-label="Fechar">×</button>
+        </div>
+
+        <input type="hidden" name="id">
+        <label>
+          Descrição
+          <input name="nome" placeholder="Ex.: Reunião de alinhamento" required>
+        </label>
+        <div class="form-row">
+          <label>
+            Data
+            <input type="date" name="data" required>
+          </label>
+          <label>
+            Horário
+            <select name="hora" required>
+              <option value="">Escolha</option>
+            </select>
+          </label>
+        </div>
+        <p id="slot-help" class="form-hint">Escolha uma data para ver os horários livres.</p>
+        <button class="primary-button" type="submit">Salvar agendamento <span>→</span></button>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status"></div>
+    <script src="js/app.js"></script>
+  </body>
+</html>

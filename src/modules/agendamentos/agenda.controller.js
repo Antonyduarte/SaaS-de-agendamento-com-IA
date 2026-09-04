@@ -106,6 +106,18 @@ async function getAgenda(req, res) {
     }
 
 }
+
+async function getAllAgenda(req, res) {
+    try {
+        const agenda = await agendaService.getAllAgenda()
+        return res.status(200).json(agenda)
+    } catch (error) {
+        return res.status(500).json(apiRes.apiResponse(
+            false,
+            MESSAGES.INTERNAL_ERROR_MSG
+        ))
+    }
+}
 // DELETE agenda
 async function deleteAgenda(req, res) {
     try {
@@ -191,4 +203,4 @@ async function editAgenda(req, res) {
     }
 }
 
-module.exports = { agendar, getHorariosDisponiveis, getAgenda, deleteAgenda, editAgenda }
+module.exports = { agendar, getHorariosDisponiveis, getAgenda, getAllAgenda, deleteAgenda, editAgenda }

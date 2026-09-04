@@ -8,6 +8,7 @@ app.use(express.json())
 app.use(cors({
     origin: process.env.CORS_ROUTE
 }))
+app.use(express.static("public"))
 
 app.use((req, res, next) => {
     if (req.app.locals.systemAvailable === false) {

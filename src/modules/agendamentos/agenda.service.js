@@ -41,6 +41,10 @@ async function getAgenda(user_id) {
     return agendamentos
 
 }
+
+async function getAllAgenda() {
+    return agendaRepo.getAllAgenda()
+}
 // DELETE AGENDA by id
 async function deleteAgenda(id, user_id) {
 
@@ -68,4 +72,4 @@ async function editAgenda(data, hora, id, user_id) {
     return edit
 }
 
-module.exports = { agendar, getHorariosDisponiveis, getAgenda, deleteAgenda, editAgenda }
+module.exports = { agendar, getHorariosDisponiveis, getAgenda, getAllAgenda, deleteAgenda, editAgenda }

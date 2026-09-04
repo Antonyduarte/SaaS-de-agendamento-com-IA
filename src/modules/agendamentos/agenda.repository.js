@@ -49,6 +49,24 @@ async function getAgenda(user_id){
     return result
 }
 
+async function getAllAgenda(){
+    const [result] = await connection.query(`
+        SELECT
+            agendamentos.id,
+            agendamentos.nome,
+            agendamentos.data,
+            agendamentos.hora,
+            clientes.id AS user_id,
+            clientes.nome AS cliente_nome,
+            clientes.email AS cliente_email
+        FROM agendamentos
+        INNER JOIN clientes ON clientes.id = agendamentos.user_id
+        ORDER BY agendamentos.data ASC, agendamentos.hora ASC
+    `)
+
+    return result
+}
+
 // DELETE - CANCELAR AGENDAMENTO By id
 
 async function deleteAgenda(id, user_id){
@@ -106,4 +124,4 @@ async function getHorariosDisponiveis(data, intervaloMinutos, inicioExpediente, 
     return result
 }
 
-module.exports = { agendar, horarioVerify, getAgenda, deleteAgenda, editAgenda, getHorariosDisponiveis }
+module.exports = { agendar, horarioVerify, getAgenda, getAllAgenda, deleteAgenda, editAgenda, getHorariosDisponiveis }
