@@ -1,76 +1,231 @@
-# Sistema de Agendamento com IA
+# 📅 Sistema de Agendamento com IA
 
-Backend em Node.js para um SaaS de agendamentos com cadastro de usuarios, login com JWT e gerenciamento de horarios por usuario.
+Backend de uma plataforma SaaS de agendamentos, desenvolvida em **Node.js** e **Express**, com autenticação via JWT, gerenciamento de usuários, recuperação de senha, controle de agendamentos e diferentes níveis de acesso.
 
-O projeto ainda esta em desenvolvimento. A base ja possui separacao por rotas, controllers, services e repositories, mas ainda precisa de melhorias de validacao, seguranca, banco de dados e testes antes de ser usado em producao.
+O projeto utiliza uma arquitetura modular separando **rotas, controllers, services e repositories**, mantendo as responsabilidades organizadas e facilitando a evolução da aplicação.
 
-## Tecnologias
+> 🚧 **Status:** Em desenvolvimento
+> O projeto ainda não está pronto para produção e algumas funcionalidades e proteções estão em evolução.
 
-- Node.js
-- Express
-- MySQL com `mysql2/promise`
-- bcrypt
-- jsonwebtoken
-- dotenv
-- cors
+---
 
-## Estrutura
+## 🚀 Funcionalidades
+
+### 🔐 Autenticação e usuários
+
+* Cadastro de usuários
+* Hash de senhas utilizando `bcrypt`
+* Login com JWT
+* Middleware de autenticação
+* Controle de acesso administrativo
+* Recuperação de senha por código
+* Expiração e controle de códigos de recuperação
+* Redefinição de senha
+* Validação básica dos dados de cadastro
+
+### 📅 Agendamentos
+
+* Criação de agendamentos
+* Listagem dos agendamentos do usuário autenticado
+* Edição de agendamentos
+* Exclusão de agendamentos
+* Consulta pública de horários disponíveis
+* Visualização administrativa de todos os agendamentos
+* Validação de disponibilidade de horários
+* Intervalo mínimo entre agendamentos
+
+### 🌐 Interface
+
+O backend também disponibiliza os arquivos presentes em `public/` como conteúdo estático através do Express.
+
+Atualmente existem páginas HTML para:
+
+* Página inicial
+* Painel administrativo
+
+---
+
+## 🛠️ Tecnologias
+
+| Tecnologia       | Utilização                        |
+| ---------------- | --------------------------------- |
+| **Node.js**      | Runtime da aplicação              |
+| **Express 5**    | Framework HTTP                    |
+| **MySQL**        | Banco de dados                    |
+| **mysql2**       | Conexão com MySQL utilizando Pool |
+| **bcrypt**       | Hash de senhas                    |
+| **jsonwebtoken** | Autenticação baseada em JWT       |
+| **Nodemailer**   | Envio de e-mails                  |
+| **dotenv**       | Variáveis de ambiente             |
+| **cors**         | Controle de acesso entre origens  |
+
+As dependências atuais estão definidas no `package.json`.
+
+---
+
+## 📁 Estrutura do projeto
 
 ```text
-src/
-  app.js                         # Configuracao principal do Express
-  server.js                      # Inicializacao do servidor
-  config/
-    db/db.js                     # Pool de conexao MySQL
-    schema/                      # Scripts SQL iniciais
-  middlewares/
-    auth.middleware.js           # Validacao de JWT
-    notFound.middleware.js       # Resposta para rotas inexistentes
-  modules/
-    users/
-      auth/auth.routes.js        # Rotas de login e cadastro
-      login/                     # Controller, service e repository de login
-      register/                  # Controller, service e repository de cadastro
-    agendamentos/                # Rotas e regras de agendamento
-  utils/
-    apiRes.js                    # Padrao de resposta da API
-    verify.js                    # Validacao basica do cadastro
+SaaS-de-agendamento-com-IA/
+│
+├── public/
+│   ├── css/
+│   ├── js/
+│   ├── admin.html
+│   └── index.html
+│
+├── src/
+│   │
+│   ├── config/
+│   │   ├── db/
+│   │   │   └── db.js
+│   │   │
+│   │   ├── mail/
+│   │   │   └── ...
+│   │   │
+│   │   └── schema/
+│   │       ├── agendamentos.sql
+│   │       ├── clientes.sql
+│   │       └── recovery_codes.sql
+│   │
+│   ├── messages/
+│   │   └── messages.js
+│   │
+│   ├── middlewares/
+│   │   ├── admin.middleware.js
+│   │   ├── auth.middleware.js
+│   │   └── notFound.middleware.js
+│   │
+│   ├── modules/
+│   │   │
+│   │   ├── agendamentos/
+│   │   │   ├── agenda.controller.js
+│   │   │   ├── agenda.repository.js
+│   │   │   ├── agenda.routes.js
+│   │   │   └── agenda.service.js
+│   │   │
+│   │   └── users/
+│   │       │
+│   │       ├── auth/
+│   │       │   └── auth.routes.js
+│   │       │
+│   │       ├── forgotpassword/
+│   │       │   ├── forgotPass.controller.js
+│   │       │   ├── forgotPass.repository.js
+│   │       │   └── forgotPass.service.js
+│   │       │
+│   │       ├── login/
+│   │       │   ├── login.controller.js
+│   │       │   ├── login.repository.js
+│   │       │   └── login.service.js
+│   │       │
+│   │       ├── register/
+│   │       │   ├── register.controller.js
+│   │       │   ├── register.respository.js
+│   │       │   └── register.service.js
+│   │       │
+│   │       └── resetPassword/
+│   │           ├── resetPassword.controller.js
+│   │           ├── resetPassword.repository.js
+│   │           └── resetPassword.service.js
+│   │
+│   ├── utils/
+│   │   ├── apiRes.js
+│   │   └── verify.js
+│   │
+│   ├── app.js
+│   └── server.js
+│
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
-## Requisitos
+A estrutura atual do repositório possui os módulos de agendamento e usuários separados, incluindo os fluxos de recuperação e redefinição de senha.
 
-- Node.js instalado
-- MySQL rodando
-- Banco de dados criado
-- Arquivo `.env` configurado na raiz do projeto
+---
 
-## Instalacao
+## 🏗️ Arquitetura
 
-1. Clone o repositorio:
+O projeto utiliza uma separação em camadas:
+
+```text
+Route
+  ↓
+Controller
+  ↓
+Service
+  ↓
+Repository
+  ↓
+Database
+```
+
+### Route
+
+Define os endpoints disponíveis e os middlewares necessários.
+
+### Controller
+
+Recebe a requisição HTTP, chama o service responsável e retorna a resposta.
+
+### Service
+
+Concentra as regras de negócio da aplicação.
+
+### Repository
+
+Responsável pela comunicação direta com o banco de dados.
+
+Essa estrutura é utilizada tanto no módulo de usuários quanto no módulo de agendamentos.
+
+---
+
+# ⚙️ Requisitos
+
+Antes de executar o projeto, é necessário ter instalado:
+
+* **Node.js**
+* **npm**
+* **MySQL**
+
+Também é necessário possuir um banco de dados MySQL configurado.
+
+---
+
+# 📥 Instalação
+
+Clone o repositório:
 
 ```bash
 git clone https://github.com/Antonyduarte/SaaS-de-agendamento-com-IA.git
 ```
 
-2. Entre na pasta:
+Entre na pasta:
 
 ```bash
 cd SaaS-de-agendamento-com-IA
 ```
 
-3. Instale as dependencias:
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-4. Crie o arquivo `.env` com base em `.env.example`.
+---
 
-## Variaveis de Ambiente
+# 🔑 Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto utilizando `.env.example` como referência.
+
+Exemplo:
 
 ```env
-DB_PORT=3306
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASS=sua_senha
 DB_NAME=nome_do_banco
@@ -78,66 +233,107 @@ DB_NAME=nome_do_banco
 SERVER_PORT=3000
 
 SECRET_KEY=sua_chave_jwt_forte
+
+CORS_ROUTE=http://localhost:3000
 ```
 
-Observacao: o codigo usa `SECRET_KEY` para assinar e validar JWT. Use uma chave longa e aleatoria em ambientes reais.
+> **Importante:** nunca envie o arquivo `.env` para o GitHub.
 
-## Banco De Dados
+A aplicação utiliza `SECRET_KEY` para assinatura e validação dos tokens JWT e `CORS_ROUTE` para definir a origem permitida pelo CORS.
 
-Os schemas ficam em:
+---
 
-- `src/config/schema/clientes.sql`
-- `src/config/schema/agendamentos.sql`
+# 🗄️ Banco de dados
 
-Antes de rodar a aplicacao, revise o schema de `agendamentos`, pois ele precisa estar alinhado com o codigo. A tabela deve conter, no minimo:
+Os scripts SQL estão localizados em:
 
-- `id`
-- `user_id`
-- `nome`
-- `data`
-- `hora`
-- `created_at`
-- `modified_at`
-
-Tambem e recomendado adicionar:
-
-- `PRIMARY KEY (id)`
-- `FOREIGN KEY (user_id) REFERENCES clientes(id)`
-- indice unico para impedir conflito de horarios, conforme a regra do produto
-
-Exemplo de regra:
-
-```sql
-UNIQUE KEY unique_user_schedule (user_id, data, hora)
+```text
+src/config/schema/
 ```
 
-Use essa regra se cada usuario nao puder repetir o mesmo horario. Se o sistema deve impedir que qualquer usuario agende um horario ja ocupado, use:
+Atualmente existem três schemas:
 
-```sql
-UNIQUE KEY unique_schedule_slot (data, hora)
+```text
+agendamentos.sql
+clientes.sql
+recovery_codes.sql
 ```
 
-O codigo tambem valida um intervalo de 35 minutos entre quaisquer dois agendamentos. Assim, depois de um horario `13:00`, os proximos horarios disponiveis comecam em `13:35`. Para alterar esse valor, ajuste `INTERVALO_ENTRE_AGENDAMENTOS_EM_MINUTOS` em `src/modules/agendamentos/agenda.service.js`.
+## Agendamentos
 
-## Como Executar
+A tabela `agendamentos` possui atualmente:
+
+```text
+id
+user_id
+nome
+data
+hora
+created_at
+modified_at
+```
+
+`id` é uma chave primária com incremento automático, enquanto `data` e `hora` são utilizados para representar o horário do agendamento.
+
+## Códigos de recuperação
+
+A tabela `recovery_codes` é utilizada pelo fluxo de recuperação de senha.
+
+Ela armazena:
+
+```text
+id
+user_id
+code_hash
+expires_at
+used
+used_at
+created_at
+```
+
+Os códigos são armazenados utilizando hash e possuem controle de expiração e utilização. A tabela também possui relacionamento com `clientes`.
+
+---
+
+# ▶️ Executando a aplicação
+
+Inicie o servidor com:
 
 ```bash
 node src/server.js
 ```
 
-O servidor sera iniciado na porta configurada em `SERVER_PORT`. Se a variavel nao existir, a porta padrao sera `3000`.
+O servidor utilizará a porta definida em:
 
-## Rotas Da API
+```env
+SERVER_PORT
+```
 
-Base local:
+Caso a porta não seja definida, a aplicação utiliza `3000`.
+
+O Express também disponibiliza a pasta `public/` como conteúdo estático.
+
+---
+
+# 🌐 API
+
+Base URL local:
 
 ```text
 http://localhost:3000
 ```
 
-### Autenticacao
+---
 
-#### Cadastro
+## 🔐 Autenticação
+
+As rotas de autenticação são agrupadas em:
+
+```text
+/auth
+```
+
+### Cadastro
 
 ```http
 POST /auth/register
@@ -153,7 +349,9 @@ Body:
 }
 ```
 
-#### Login
+---
+
+### Login
 
 ```http
 POST /auth/login
@@ -168,28 +366,68 @@ Body:
 }
 ```
 
-Resposta esperada:
+O login retorna um token JWT utilizado para acessar as rotas protegidas.
 
-```json
-{
-  "success": true,
-  "message": "Seja Bem-Vindo(a) !",
-  "rows": "jwt_token"
-}
-```
+---
 
-### Agendamentos
+### Recuperação de senha
 
-Todas as rotas abaixo exigem token JWT no header:
+Solicita um código de recuperação:
 
 ```http
-Authorization: Bearer seu_token_jwt
+POST /auth/forgot-password
 ```
 
-#### Criar agendamento
+O fluxo utiliza o sistema de códigos de recuperação e envio de e-mail.
+
+---
+
+### Redefinição de senha
+
+```http
+PUT /auth/reset-password
+```
+
+Utilizado para definir uma nova senha utilizando o processo de recuperação.
+
+As quatro rotas acima estão atualmente registradas em `auth.routes.js`.
+
+---
+
+# 📅 Agendamentos
+
+As rotas de agendamento utilizam:
+
+```text
+/agendamento
+```
+
+---
+
+### Consultar horários disponíveis
+
+**Pública — não exige JWT.**
+
+```http
+GET /agendamento/disponiveis
+```
+
+Retorna os horários que podem ser reservados.
+
+---
+
+### Criar agendamento
+
+**Requer JWT.**
 
 ```http
 POST /agendamento
+```
+
+Header:
+
+```http
+Authorization: Bearer seu_token_jwt
 ```
 
 Body:
@@ -202,13 +440,23 @@ Body:
 }
 ```
 
-#### Listar agendamentos do usuario logado
+---
+
+### Listar meus agendamentos
+
+**Requer JWT.**
 
 ```http
 GET /agendamento
 ```
 
-#### Editar agendamento
+O usuário autenticado consulta os seus próprios agendamentos.
+
+---
+
+### Editar agendamento
+
+**Requer JWT.**
 
 ```http
 PUT /agendamento
@@ -224,56 +472,213 @@ Body:
 }
 ```
 
-#### Deletar agendamento
+---
+
+### Excluir agendamento
+
+**Requer JWT.**
 
 ```http
 DELETE /agendamento/:id
 ```
 
-## Pontos De Seguranca Para Melhorar
+---
 
-- Adicionar rate limit em `/auth/login` e `/auth/register`.
-- Adicionar `helmet` para headers HTTP de seguranca.
-- Validar todas as entradas com uma biblioteca como `zod`, `joi` ou `express-validator`.
-- Exigir senha minima e bloquear senhas fracas.
-- Normalizar email antes de salvar e consultar: `trim()` e `toLowerCase()`.
-- Validar `SECRET_KEY`, variaveis do banco e porta no boot da aplicacao.
-- Evitar retornar `error.message` diretamente para o cliente.
-- Criar regra clara de expiracao, refresh e revogacao de tokens.
-- Configurar CORS por variavel de ambiente em vez de deixar fixo em `localhost`.
-- Adicionar constraints no banco para reforcar regras de negocio.
+### Listar todos os agendamentos
 
-## Melhorias Recomendadas
+**Requer JWT + permissão administrativa.**
 
-- Criar scripts no `package.json`, como `start`, `dev` e `test`.
-- Corrigir o `.gitignore` para nao ignorar `package.json` e `package-lock.json`.
-- Adicionar testes automatizados para cadastro, login e agendamentos.
-- Padronizar o formato das respostas da API.
-- Criar migrations em vez de depender de scripts SQL soltos.
-- Adicionar paginacao na listagem de agendamentos.
-- Adicionar status do agendamento: `pendente`, `confirmado`, `cancelado`.
-- Criar logs estruturados para facilitar debug e monitoramento.
-- Documentar exemplos de erros e codigos HTTP.
+```http
+GET /agendamento/admin
+```
 
-## Estado Atual
+Essa rota é protegida pelo `authMiddleware` e pelo `adminMiddleware`.
 
-Funcionalidades ja iniciadas:
+---
 
-- Cadastro de usuario com hash de senha.
-- Login com JWT.
-- Middleware de autenticacao.
-- CRUD basico de agendamentos.
-- Conexao com MySQL via pool.
+# 🔒 Autorização
 
-Antes de producao, priorize:
+A API possui dois níveis principais de acesso:
 
-1. Corrigir schema de `agendamentos`.
-2. Corrigir fluxo de cadastro para aguardar o INSERT no banco.
-3. Definir e reforcar a regra de conflito de horario.
-4. Implementar validacao robusta.
-5. Adicionar protecoes basicas de seguranca.
-6. Criar testes automatizados.
+### Usuário autenticado
 
-## Licenca
+Pode acessar operações relacionadas aos próprios agendamentos.
 
-ISC
+```http
+Authorization: Bearer seu_token_jwt
+```
+
+### Administrador
+
+Além das operações autenticadas, possui acesso à consulta geral:
+
+```http
+GET /agendamento/admin
+```
+
+A rota administrativa passa por:
+
+```text
+authMiddleware
+      ↓
+adminMiddleware
+      ↓
+agendaController.getAllAgenda
+```
+
+---
+
+# ⏱️ Regra de horários
+
+O módulo de agendamentos possui uma regra de intervalo mínimo entre horários.
+
+O valor utilizado atualmente é definido no service de agenda:
+
+```text
+INTERVALO_ENTRE_AGENDAMENTOS_EM_MINUTOS
+```
+
+Essa regra evita que horários incompatíveis sejam disponibilizados para novos agendamentos.
+
+---
+
+# 📧 Recuperação de senha
+
+O projeto possui um fluxo dedicado para recuperação de senha:
+
+```text
+forgotpassword/
+```
+
+e:
+
+```text
+resetPassword/
+```
+
+O fluxo utiliza códigos de recuperação armazenados na tabela `recovery_codes`, com:
+
+* Hash do código
+* Data de expiração
+* Controle de utilização
+* Data de utilização
+* Relacionamento com o usuário
+
+O projeto também possui `Nodemailer` entre suas dependências para envio de e-mails.
+
+---
+
+# 🌍 CORS
+
+O CORS é configurado através da variável:
+
+```env
+CORS_ROUTE=http://localhost:3000
+```
+
+A aplicação utiliza essa variável para definir a origem permitida:
+
+```javascript
+cors({
+    origin: process.env.CORS_ROUTE
+})
+```
+
+Em produção, essa variável deve apontar somente para o domínio autorizado.
+
+---
+
+# 🧪 Testes
+
+Os testes automatizados ainda não estão implementados no projeto.
+
+A próxima etapa recomendada é adicionar testes para:
+
+* Cadastro
+* Login
+* JWT
+* Recuperação de senha
+* Redefinição de senha
+* Criação de agendamento
+* Edição de agendamento
+* Exclusão de agendamento
+* Conflito de horários
+* Permissões administrativas
+
+---
+
+# 🔐 Segurança
+
+Antes de utilizar o sistema em produção, recomenda-se implementar:
+
+* Rate limiting nas rotas de autenticação
+* `helmet`
+* Validação robusta dos dados de entrada
+* Política de senha forte
+* Normalização de e-mails
+* Validação das variáveis de ambiente no boot
+* Tratamento centralizado de erros
+* Expiração adequada dos JWT
+* Estratégia de refresh/revogação de tokens
+* Limitação de tentativas de recuperação de senha
+* Expiração e invalidação adequada dos códigos de recuperação
+* Constraints adicionais no banco
+* Logs estruturados
+* HTTPS em produção
+
+---
+
+# 📌 Estado atual
+
+### Implementado
+
+* [x] Estrutura modular
+* [x] Cadastro de usuários
+* [x] Hash de senha
+* [x] Login
+* [x] JWT
+* [x] Middleware de autenticação
+* [x] Middleware administrativo
+* [x] CRUD de agendamentos
+* [x] Consulta pública de horários disponíveis
+* [x] Recuperação de senha
+* [x] Redefinição de senha
+* [x] Códigos de recuperação
+* [x] Envio de e-mail
+* [x] Pool de conexão MySQL
+* [x] Servir arquivos estáticos pelo Express
+
+### Em desenvolvimento
+
+* [ ] Validação robusta de entradas
+* [ ] Rate limiting
+* [ ] Hardening de segurança
+* [ ] Testes automatizados
+* [ ] Migrations
+* [ ] Logs estruturados
+* [ ] Documentação completa dos códigos de erro
+* [ ] Melhorias nas regras de conflito de horários
+* [ ] Preparação para ambiente de produção
+
+---
+
+# 🗺️ Próximos passos
+
+A evolução recomendada do projeto é:
+
+1. Finalizar as regras de negócio dos agendamentos.
+2. Reforçar as constraints do banco.
+3. Implementar validação robusta.
+4. Melhorar o fluxo de autenticação e recuperação de senha.
+5. Adicionar testes automatizados.
+6. Implementar rate limiting e headers de segurança.
+7. Padronizar erros e respostas da API.
+8. Criar migrations.
+9. Implementar logs e monitoramento.
+10. Preparar o deploy em ambiente de produção.
+
+---
+
+# 📄 Licença
+
+Este projeto está sob a licença **ISC**.
