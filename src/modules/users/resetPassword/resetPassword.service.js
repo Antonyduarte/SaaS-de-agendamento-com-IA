@@ -14,24 +14,27 @@ async function resetPassword(email, code, password) {
         throw new Error(MESSAGES.REGEX_MAIL)
     }
 
-    if (!user[0]) {
+    if (!user) {
         throw new Error(MESSAGES.USER_NOT_FOUND)
     }
 
-    const recentlyCode = await resetRepo.recentlyCode(user[0].id) // Busca o código mais recente gerado pelo user, de acordo com o e-mail   
+    const recentlyCode = await resetRepo.recentlyCode(user.id) // Busca o código mais recente gerado pelo user, de acordo com o e-mail
 
     if (!recentlyCode) {
-        throw new Error("INVALID_OR_EXPIRED_CODE")
+        throw new Error(MESSAGES.UNVAILABLE_CODE)
     }
 
     const validateCode = await bcrypt.compare(String(code), recentlyCode.code_hash)
     if (!validateCode) {
-        throw new Error("INVALID_OR_EXPIRED_CODE")
+        throw new Error(MESSAGES.UNVAILABLE_CODE)
     }
 
     const hashedPass = await bcrypt.hash(password, 10) // hashea a nova senha e manda pro banco hasheada
 
-    await resetRepo.setPassword(hashedPass, user[0].id)
+    const updated = await resetRepo.setPasswordAndConsumeCode(hashedPass, user.id, recentlyCode.id)
+    if (!updated) {
+        throw new Error(MESSAGES.UNVAILABLE_CODE)
+    }
 
     return true
 }

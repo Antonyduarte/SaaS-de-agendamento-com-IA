@@ -16,11 +16,40 @@ async function recentlyCode(user_id) {
     return recoveryCode
 }
 
-async function setPassword(newPassword, user_id) {
+async function setPasswordAndConsumeCode(newPassword, userId, recoveryCodeId) {
+    const connection = await pool.getConnection()
 
-    const [result] = await pool.query("UPDATE clientes SET password = ?, used = TRUE, used_at = NOW() WHERE id = ?", [newPassword, user_id])
+    try {
+        await connection.beginTransaction()
 
-    return result 
+        const [consumeResult] = await connection.query(
+            "UPDATE recovery_codes SET used = TRUE, used_at = NOW() WHERE id = ? AND user_id = ? AND used = FALSE",
+            [recoveryCodeId, userId]
+        )
+
+        if (consumeResult.affectedRows !== 1) {
+            await connection.rollback()
+            
+            return false
+        }
+
+        await connection.query("UPDATE clientes SET password = ? WHERE id = ?", [newPassword, userId])
+
+        await connection.commit()
+
+        return true
+        
+    } catch (error) {
+
+        await connection.rollback()
+
+        throw error
+
+    } finally {
+
+        connection.release()
+
+    }
 }
 
-module.exports  = { findByEmail, recentlyCode, setPassword }
+module.exports  = { findByEmail, recentlyCode, setPasswordAndConsumeCode }

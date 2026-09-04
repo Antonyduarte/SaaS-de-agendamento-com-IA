@@ -14,7 +14,15 @@ async function userEmail(email) {
 }
 
 async function recoveryCode(user_id, code_hash) {
-    const [result] = await connection.query("INSERT INTO recovery_codes (user_id, code_hash, expires_at) VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))", [user_id, code_hash])
+    await connection.query(
+        "UPDATE recovery_codes SET used = TRUE, used_at = NOW() WHERE user_id = ? AND used = FALSE",
+        [user_id]
+    )
+
+    const [result] = await connection.query(
+        "INSERT INTO recovery_codes (user_id, code_hash, expires_at) VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))",
+        [user_id, code_hash]
+    )
 
     return result
 }

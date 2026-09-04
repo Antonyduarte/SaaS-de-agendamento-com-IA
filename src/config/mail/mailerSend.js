@@ -1,8 +1,8 @@
 require("dotenv").config();
 const transporter = require("./mail");
 
-function sendCode(userMail, code) {
-  transporter.sendMail({
+async function sendCode(userMail, code) {
+  return transporter.sendMail({
     from: process.env.MAIL_USER,
     to: userMail,
     subject: "Código de verificação",
