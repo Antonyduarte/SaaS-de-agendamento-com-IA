@@ -1,5 +1,5 @@
 const express = require("express")
-const { apiResponse } = require("../utils/apiRes")
+const { apiResponse } = require("../utils/response/apiRes")
 const router = express.Router()
 
 function pageNotFound(req, res, next) {

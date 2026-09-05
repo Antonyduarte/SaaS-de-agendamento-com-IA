@@ -1,6 +1,6 @@
 const { MESSAGES } = require("../../../messages/messages")
-const { apiResponse } = require("../../../utils/apiRes")
-const { EMAIL_REGEX } = require("../../../utils/regex")
+const { apiResponse } = require("../../../utils/response/apiRes")
+const { EMAIL_REGEX } = require("../../../utils/regex/regex")
 const forgotService = require("./forgotPass.service")
 
 async function recoveryCode(req, res) {

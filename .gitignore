@@ -8,3 +8,6 @@ node_modules
 #md
 *.md
 !README.md
+
+#Temporaily ignore public !!
+public

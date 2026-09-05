@@ -1,7 +1,7 @@
-const apiRes = require("../../utils/apiRes")
+const apiRes = require("../../utils/response/apiRes")
 const agendaService = require("./agenda.service")
 const { MESSAGES } = require("../../messages/messages")
-const { HORA_REGEX, DATA_REGEX } = require("../../utils/regex")
+const { HORA_REGEX, DATA_REGEX } = require("../../utils/regex/regex")
 
 async function agendar(req, res) {
     const { nome, data, hora } = req.body
@@ -203,4 +203,41 @@ async function editAgenda(req, res) {
     }
 }
 
-module.exports = { agendar, getHorariosDisponiveis, getAgenda, getAllAgenda, deleteAgenda, editAgenda }
+// -- ADMIN endpoints --
+
+async function admDeleteAgenda(req, res) {
+
+    try {
+        const { id }  = req.params
+        if (id.length === 0) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                MESSAGES.EMPTY_DATA_MSG
+            ))
+        }
+
+        await agendaService.admDeleteAgenda(id)
+        return res.status(200).json(apiRes.apiResponse(
+            true,
+            MESSAGES.DELETED_DATA
+        ))
+
+    } catch (error) {
+        return res.status(500).json(apiRes.apiResponse(
+            false,
+            MESSAGES.INTERNAL_ERROR
+        ))
+    }
+
+}
+
+
+module.exports = {
+    agendar,
+    getHorariosDisponiveis,
+    getAgenda,
+    getAllAgenda,
+    deleteAgenda,
+    editAgenda,
+    admDeleteAgenda
+}

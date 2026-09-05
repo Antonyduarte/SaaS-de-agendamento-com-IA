@@ -72,4 +72,22 @@ async function editAgenda(data, hora, id, user_id) {
     return edit
 }
 
-module.exports = { agendar, getHorariosDisponiveis, getAgenda, getAllAgenda, deleteAgenda, editAgenda }
+// ------- ADM endpoints -------
+
+async function admDeleteAgenda(id){
+
+    let deleteAgenda = await agendaRepo.admDeleteAgenda(id)
+
+    return deleteAgenda
+
+}
+
+module.exports = { 
+    agendar, 
+    getHorariosDisponiveis, 
+    getAgenda, 
+    getAllAgenda, 
+    deleteAgenda, 
+    editAgenda,
+    admDeleteAgenda 
+}

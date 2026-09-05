@@ -43,13 +43,13 @@ async function horarioVerify(data, hora, intervaloMinutos, agendamentoId = null)
 
 // GET - VER AGENDAMENTOS
 
-async function getAgenda(user_id){
+async function getAgenda(user_id) {
     let [result] = await connection.query("SELECT user_id, id, nome, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
 
     return result
 }
 
-async function getAllAgenda(){
+async function getAllAgenda() {
     const [result] = await connection.query(`
         SELECT
             agendamentos.id,
@@ -69,7 +69,7 @@ async function getAllAgenda(){
 
 // DELETE - CANCELAR AGENDAMENTO By id
 
-async function deleteAgenda(id, user_id){
+async function deleteAgenda(id, user_id) {
     let [result] = await connection.query("DELETE FROM agendamentos WHERE id = ? AND user_id = ?", [id, user_id])
 
     return result
@@ -77,10 +77,10 @@ async function deleteAgenda(id, user_id){
 
 // PUT - EDITAR AGENDAMENTO
 
-async function editAgenda(data, hora, id , user_id) {
-    
+async function editAgenda(data, hora, id, user_id) {
+
     let [result] = await connection.query("UPDATE agendamentos SET data = ?, hora = ? WHERE id = ? AND user_id = ?", [data, hora, id, user_id])
-    
+
     return result
 }
 
@@ -124,4 +124,25 @@ async function getHorariosDisponiveis(data, intervaloMinutos, inicioExpediente, 
     return result
 }
 
-module.exports = { agendar, horarioVerify, getAgenda, getAllAgenda, deleteAgenda, editAgenda, getHorariosDisponiveis }
+
+// ------------- ADMIN ENDPOINTS ----------
+
+//CANCELAR AGENDAMENTO
+async function admDeleteAgenda(id) {
+
+    const [rows] = await connection.query("DELETE FROM agendamentos WHERE id = ?", [id])
+
+    return rows
+
+}
+
+module.exports = {
+    agendar,
+    horarioVerify,
+    getAgenda,
+    getAllAgenda,
+    deleteAgenda,
+    editAgenda,
+    getHorariosDisponiveis,
+    admDeleteAgenda
+}

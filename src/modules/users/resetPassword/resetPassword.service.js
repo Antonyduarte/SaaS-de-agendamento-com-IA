@@ -2,7 +2,7 @@ require("dotenv").config()
 const bcrypt = require("bcrypt")
 const { MESSAGES } = require("../../../messages/messages");
 const resetRepo = require("./resetPassword.repository")
-const REGEX = require("../../../utils/regex")
+const REGEX = require("../../../utils/regex/regex")
 
 async function resetPassword(email, code, password) {
     if (!email || !code || !password) {

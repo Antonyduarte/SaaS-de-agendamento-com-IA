@@ -2,7 +2,7 @@ const forgotRepo = require("./forgotPass.repository")
 const { randomInt } = require("crypto")
 const { MESSAGES } = require("../../../messages/messages")
 const mailer = require("../../../config/mail/mailerSend")
-const { EMAIL_REGEX } = require("../../../utils/regex")
+const { EMAIL_REGEX } = require("../../../utils/regex/regex")
 const bcrypt = require("bcrypt")
 
 // function generateCode()

@@ -4,7 +4,7 @@ const MESSAGES = {
     INVALID_DATA: "Data inválida",
     INVALID_TIME: "Horário inválido",
     NO_APPOINTMENTS: "NO_APPOINTMENTS",
-    INTERVAL_ERROR:"Erro ao agendar, ",
+    INTERVAL_ERROR:"Erro ao agendar",
 
     //ERROS DE LOGIN/REGISTER/AUTH
     USER_NOT_FOUND: "USER_NOT_FOUND",
@@ -21,7 +21,9 @@ const MESSAGES = {
     FORGOT_MESSAGE: "Se este e-mail estiver cadastrado, enviaremos um código de segurança para o mesmo",
     //RESET PASSWORD
     UNVAILABLE_CODE: "Código expirado ou inválido",
-    PASSWORD_ALTERED: "Senha alterada com sucesso"
+    PASSWORD_ALTERED: "Senha alterada com sucesso",
+    //MENSAGENS DE AGENDAMENTO
+    DELETED_DATA: "Deletado com sucesso"
 } 
 
 module.exports = { MESSAGES }

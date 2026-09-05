@@ -1,5 +1,5 @@
-const responses = require("./apiRes")
-const { NOME_REGEX, EMAIL_REGEX } = require("./regex")
+const responses = require("../response/apiRes")
+const { NOME_REGEX, EMAIL_REGEX } = require("../regex/regex")
 
 function verify(req, res, next) {
     const { nome, email, senha } = req.body

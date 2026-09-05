@@ -593,7 +593,7 @@ Em produção, essa variável deve apontar somente para o domínio autorizado.
 Os testes automatizados ainda não estão implementados no projeto.
 
 A próxima etapa recomendada é adicionar testes para:
-
+"
 * Cadastro
 * Login
 * JWT

@@ -1,6 +1,6 @@
 const registerRepo = require("./register.respository")
 const bcrypt = require("bcrypt")
-const responses = require("../../../utils/apiRes")
+const responses = require("../../../utils/response/apiRes")
 
 async function userRegister(nome, email, senha) {
 

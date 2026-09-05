@@ -1,6 +1,6 @@
 const express = require("express").Router()
 const router = express
-const verify = require("../../../utils/verify")
+const verify = require("../../../utils/verify/verify")
 
 const loginController = require("../login/login.controller")
 const registerController = require("../register/register.controller")
@@ -14,3 +14,4 @@ router.put("/reset-password", resetPasswordController.setPassword)
 
 
 module.exports = router
+ 

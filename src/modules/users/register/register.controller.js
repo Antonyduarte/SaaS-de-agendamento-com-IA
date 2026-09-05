@@ -1,5 +1,5 @@
 const registerService = require("./register.service")
-const apiRes = require("../../../utils/apiRes")
+const apiRes = require("../../../utils/response/apiRes")
 const { MESSAGES } = require("../../../messages/messages")
 
 async function register(req, res) {

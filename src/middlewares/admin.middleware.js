@@ -1,4 +1,4 @@
-const { apiResponse } = require("../utils/apiRes")
+const { apiResponse } = require("../utils/response/apiRes")
 
 function adminMiddleware(req, res, next) {
     if (req.user?.role !== "admin") {

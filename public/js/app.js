@@ -1,240 +1,331 @@
-const $ = (selector, scope = document) => scope.querySelector(selector)
-const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)]
+// ---------- TOAST ----------
+const toastEl = document.getElementById("toast");
+let toastTimer = null;
 
-const state = {
-  token: localStorage.getItem("agendaFlowToken"),
-  resetEmail: "",
-  editing: null
+function showToast(message, type = "success") {
+  toastEl.textContent = message;
+  toastEl.className = "page__toast is-shown " + (type === "error" ? "is-error" : "is-success");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove("is-shown");
+  }, 4200);
 }
 
-const authView = $("#auth-view")
-const dashboardView = $("#dashboard-view")
-const modal = $("#appointment-modal")
-const appointmentForm = $("#appointment-form")
-const toast = $("#toast")
-
-function message(text, error = false) {
-  toast.textContent = text
-  toast.className = `toast show${error ? " error" : ""}`
-  clearTimeout(message.timeout)
-  message.timeout = setTimeout(() => toast.classList.remove("show"), 4200)
+// ---------- VIEW SWITCHING ----------
+function setView(name) {
+  document.querySelectorAll(".view").forEach((v) => {
+    v.classList.toggle("is-active", v.dataset.view === name);
+  });
+  document.querySelectorAll(".nav-link").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.view === name);
+  });
+  if (name === "mine") loadMine();
+  if (name === "admin") loadAdmin();
 }
 
-function emailIsValid(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-}
+document.querySelectorAll(".nav-link").forEach((btn) => {
+  btn.addEventListener("click", () => setView(btn.dataset.view));
+});
 
-function getCurrentUser() {
-  try {
-    const payload = state.token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")
-    return JSON.parse(decodeURIComponent(atob(payload).split("").map(char => `%${(`00${char.charCodeAt(0).toString(16)}`).slice(-2)}`).join("")))
-  } catch {
-    return null
+// ---------- AUTH STATE ----------
+function refreshAuthUI() {
+  const user = Auth.currentUser();
+  const loggedIn = !!user;
+
+  document.getElementById("nav-logged-out").classList.toggle("is-hidden", loggedIn);
+  document.getElementById("nav-logged-in").classList.toggle("is-hidden", !loggedIn);
+  document.getElementById("whoami").classList.toggle("is-hidden", !loggedIn);
+  document.getElementById("btn-logout").classList.toggle("is-hidden", !loggedIn);
+  document.getElementById("nav-admin").classList.toggle("is-hidden", !(loggedIn && user.role === "admin"));
+
+  if (loggedIn) {
+    const whoami = document.getElementById("whoami");
+    whoami.innerHTML = `<strong>${escapeHtml(user.name || "")}</strong>${escapeHtml(user.email || "")}`;
+    setView("book");
+  } else {
+    setView("login");
   }
 }
 
-function validateEmailBeforeSubmit(form) {
-  const emailInput = $("[name=email]", form)
-  if (emailIsValid(emailInput.value)) return true
+document.getElementById("btn-logout").addEventListener("click", () => {
+  Auth.clearToken();
+  refreshAuthUI();
+  showToast("Você saiu da sua conta.");
+});
 
-  emailInput.focus()
-  message("Formato de e-mail inválido", true)
-  return false
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
 }
 
-async function request(url, options = {}) {
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) }
-  if (state.token) headers.Authorization = `Bearer ${state.token}`
-  const response = await fetch(url, { ...options, headers })
-  const data = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(data.message || "Não foi possível concluir a operação.")
-  return data
-}
+// ---------- LOGIN ----------
+document.getElementById("form-login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.email.value.trim();
+  const senha = form.senha.value;
 
-function setAuthForm(formName) {
-  $$(".form", authView).forEach(form => form.classList.add("hidden"))
-  $(`#${formName}-form`).classList.remove("hidden")
-  $$(".tab").forEach(tab => tab.classList.toggle("active", tab.dataset.auth === formName))
-  const content = {
-    login: ["Entre na sua conta", "Acesse sua agenda e acompanhe seus horários."],
-    register: ["Crie sua conta", "Comece a organizar sua rotina em poucos segundos."],
-    forgot: ["Recupere seu acesso", "Informe o e-mail usado no cadastro para receber um código."],
-    reset: ["Crie uma nova senha", "Digite o código enviado para o seu e-mail."]
-  }[formName]
-  $("#auth-title").textContent = content[0]
-  $("#auth-subtitle").textContent = content[1]
-}
-
-function showDashboard() {
-  authView.classList.add("hidden")
-  dashboardView.classList.remove("hidden")
-  $("#admin-button").classList.toggle("hidden", getCurrentUser()?.role !== "admin")
-  $("#today-label").textContent = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "numeric", month: "long" }).format(new Date())
-  loadAppointments()
-}
-
-function showAuth() {
-  dashboardView.classList.add("hidden")
-  authView.classList.remove("hidden")
-  setAuthForm("login")
-}
-
-function toISODate(value) {
-  if (/^\d{4}-\d{2}-\d{2}/.test(String(value))) return String(value).slice(0, 10)
-  const date = new Date(`${value}T12:00:00`)
-  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10)
-}
-
-function formatAppointmentDate(value) {
-  const date = new Date(`${toISODate(value)}T12:00:00`)
-  return { day: String(date.getDate()).padStart(2, "0"), month: new Intl.DateTimeFormat("pt-BR", { month: "short" }).format(date).replace(".", "") }
-}
-
-function formatTime(value) { return String(value || "").slice(0, 5) }
-
-async function loadAppointments() {
-  const list = $("#appointments-list")
-  list.innerHTML = '<div class="empty-state"><span>◌</span>Carregando seus horários...</div>'
   try {
-    const data = await request("/agendamento")
-    const appointments = Array.isArray(data) ? data : []
-    $("#appointments-count").textContent = appointments.length ? `${appointments.length} ${appointments.length === 1 ? "horário marcado" : "horários marcados"}` : "Nenhum horário marcado"
-    if (!appointments.length) {
-      list.innerHTML = '<div class="empty-state"><span>☼</span><strong>Sua agenda está livre.</strong><br>Adicione seu primeiro agendamento.</div>'
-      return
+    const res = await Api.login(email, senha);
+    // O nome exato do campo que carrega o token depende de como
+    // utils/apiRes.js monta a resposta. Tentamos os formatos mais
+    // prováveis antes de desistir.
+    const token =
+      (res && (res.rows || res.data || res.token || res.result || res.dados)) ||
+      (typeof res === "string" ? res : null);
+
+    if (!token) {
+      console.error("Resposta de login recebida (sem token reconhecido):", res);
+      throw new Error("Resposta de login inesperada do servidor. Veja o console (F12) para o formato exato.");
     }
-    appointments.sort((a, b) => `${a.data}${a.hora}`.localeCompare(`${b.data}${b.hora}`))
-    list.innerHTML = appointments.map(item => {
-      const date = formatAppointmentDate(item.data)
-      return `<article class="appointment"><div class="appointment-date"><b>${date.day}</b><span>${date.month}</span></div><div><h3>${escapeHtml(item.nome)}</h3><p>${formatTime(item.hora)} · ${new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(new Date(`${toISODate(item.data)}T12:00:00`))}</p></div><div class="appointment-actions"><button title="Editar" data-edit='${encodeURIComponent(JSON.stringify(item))}'>✎</button><button title="Excluir" data-delete="${item.id}">⌫</button></div></article>`
-    }).join("")
-  } catch (error) {
-    if (/token|expirado/i.test(error.message)) logout(true)
-    else { list.innerHTML = '<div class="empty-state"><span>!</span>Não foi possível carregar a agenda.</div>'; message(error.message, true) }
+    Auth.setToken(token);
+    form.reset();
+    refreshAuthUI();
+    showToast(res.message || "Bem-vindo(a) de volta!");
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- REGISTER ----------
+document.getElementById("form-register").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  try {
+    const res = await Api.register(form.nome.value.trim(), form.email.value.trim(), form.senha.value);
+    showToast(res.message || "Conta criada com sucesso.");
+    form.reset();
+    setView("login");
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- FORGOT PASSWORD ----------
+document.getElementById("form-forgot").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  try {
+    const res = await Api.forgotPassword(form.email.value.trim());
+    showToast(res.message || "Se o e-mail existir, um código foi enviado.");
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- RESET PASSWORD ----------
+document.getElementById("form-reset").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  try {
+    const res = await Api.resetPassword(form.email.value.trim(), form.code.value.trim(), form.password.value);
+    showToast(res.message || "Senha alterada com sucesso.");
+    form.reset();
+    setView("login");
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- BOOK APPOINTMENT ----------
+const bookDateInput = document.getElementById("book-date");
+const slotBoard = document.getElementById("slot-board");
+const bookHoraInput = document.getElementById("book-hora");
+const bookSubmitBtn = document.getElementById("book-submit");
+
+const today = new Date().toISOString().slice(0, 10);
+bookDateInput.min = today;
+
+bookDateInput.addEventListener("change", loadSlots);
+
+async function loadSlots() {
+  const data = bookDateInput.value;
+  bookHoraInput.value = "";
+  bookSubmitBtn.disabled = true;
+
+  if (!data) {
+    slotBoard.innerHTML = `<p class="board-strip__hint">Escolha uma data para ver os horários.</p>`;
+    return;
+  }
+
+  slotBoard.innerHTML = `<p class="board-strip__hint">Carregando horários...</p>`;
+
+  try {
+    const res = await Api.getDisponiveis(data);
+    const horarios = (res && res.rows) || [];
+
+    if (horarios.length === 0) {
+      slotBoard.innerHTML = `<p class="board-strip__hint">Nenhum horário livre nesta data.</p>`;
+      return;
+    }
+
+    slotBoard.innerHTML = "";
+    horarios.forEach((item) => {
+      const hora = item.horario || item;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "slot";
+      btn.textContent = hora;
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#slot-board .slot").forEach((s) => s.classList.remove("is-selected"));
+        btn.classList.add("is-selected");
+        bookHoraInput.value = hora;
+        bookSubmitBtn.disabled = false;
+      });
+      slotBoard.appendChild(btn);
+    });
+  } catch (err) {
+    slotBoard.innerHTML = `<p class="board-strip__hint">Não foi possível carregar os horários.</p>`;
+    showToast(err.message, "error");
   }
 }
 
-function escapeHtml(value) { const element = document.createElement("div"); element.textContent = value; return element.innerHTML }
+document.getElementById("form-book").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const nome = form.nome.value.trim();
+  const data = form.data.value;
+  const hora = bookHoraInput.value;
 
-async function loadSlots(date, selected = "") {
-  const select = appointmentForm.hora
-  select.innerHTML = '<option value="">Carregando...</option>'
-  if (!date) { select.innerHTML = '<option value="">Escolha uma data</option>'; return }
+  if (!hora) {
+    showToast("Selecione um horário disponível.", "error");
+    return;
+  }
+
   try {
-    const data = await request(`/agendamento/disponiveis?data=${date}`)
-    const slots = data.rows || []
-    const values = slots.map(slot => typeof slot === "string" ? slot : slot.horario)
-    if (selected && !values.includes(selected)) values.unshift(selected)
-    select.innerHTML = `<option value="">Escolha</option>${values.map(time => `<option value="${time}" ${time === selected ? "selected" : ""}>${time}</option>`).join("")}`
-    $("#slot-help").textContent = values.length ? "Os horários exibidos estão disponíveis." : "Não há horários disponíveis nessa data."
-  } catch (error) {
-    select.innerHTML = '<option value="">Indisponível</option>'
-    $("#slot-help").textContent = "Não foi possível buscar os horários agora."
+    const res = await Api.criarAgendamento(nome, data, hora);
+    showToast(res.message || "Agendamento confirmado.");
+    form.reset();
+    slotBoard.innerHTML = `<p class="board-strip__hint">Escolha uma data para ver os horários.</p>`;
+    bookSubmitBtn.disabled = true;
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- MY APPOINTMENTS ----------
+async function loadMine() {
+  const tbody = document.querySelector("#table-mine tbody");
+  const emptyMsg = document.getElementById("mine-empty");
+  tbody.innerHTML = "";
+  emptyMsg.classList.add("is-hidden");
+
+  try {
+    const res = await Api.getMeusAgendamentos();
+    const lista = Array.isArray(res) ? res : [];
+
+    if (lista.length === 0) {
+      emptyMsg.classList.remove("is-hidden");
+      return;
+    }
+
+    lista.forEach((item) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(item.nome)}</td>
+        <td>${escapeHtml(formatDate(item.data))}</td>
+        <td>${escapeHtml(item.hora)}</td>
+        <td>
+          <button class="btn--edit-text" data-id="${item.id}" data-action="edit">Alterar</button>
+          <button class="btn--danger-text" data-id="${item.id}" data-action="delete">Cancelar</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    showToast(err.message, "error");
   }
 }
 
-function openAppointment(item = null) {
-  state.editing = item
-  appointmentForm.reset()
-  $("[name=id]", appointmentForm).value = item?.id || ""
-  appointmentForm.nome.value = item?.nome || ""
-  appointmentForm.data.value = item ? toISODate(item.data) : new Date().toISOString().slice(0, 10)
-  appointmentForm.data.min = new Date().toISOString().slice(0, 10)
-  $("#modal-eyebrow").textContent = item ? "EDITAR HORÁRIO" : "NOVO HORÁRIO"
-  $("#modal-title").textContent = item ? "Editar agendamento" : "Adicionar agendamento"
-  loadSlots(appointmentForm.data.value, item ? formatTime(item.hora) : "")
-  modal.showModal()
-}
+document.querySelector("#table-mine tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+  const id = btn.dataset.id;
 
-function logout(silent = false) {
-  localStorage.removeItem("agendaFlowToken")
-  state.token = null
-  showAuth()
-  if (!silent) message("Você saiu da sua conta.")
-}
-
-$$('.tab').forEach(tab => tab.addEventListener("click", () => setAuthForm(tab.dataset.auth)))
-$$('[data-view]').forEach(button => button.addEventListener("click", () => setAuthForm(button.dataset.view)))
-$$('.toggle-password').forEach(button => button.addEventListener("click", () => {
-  const input = $("input", button.parentElement)
-  input.type = input.type === "password" ? "text" : "password"
-  button.textContent = input.type === "password" ? "◉" : "◌"
-}))
-
-$("#login-form").addEventListener("submit", async event => {
-  event.preventDefault()
-  if (!validateEmailBeforeSubmit(event.currentTarget)) return
-  const form = new FormData(event.currentTarget)
-  try {
-    const data = await request("/auth/login", { method: "POST", body: JSON.stringify({ email: form.get("email"), senha: form.get("senha") }) })
-    state.token = data.rows
-    localStorage.setItem("agendaFlowToken", state.token)
-    showDashboard()
-    message("Login realizado. Que bom ter você de volta!")
-  } catch (error) { message(error.message, true) }
-})
-
-$("#register-form").addEventListener("submit", async event => {
-  event.preventDefault()
-  if (!validateEmailBeforeSubmit(event.currentTarget)) return
-  const form = new FormData(event.currentTarget)
-  try {
-    await request("/auth/register", { method: "POST", body: JSON.stringify(Object.fromEntries(form)) })
-    message("Conta criada! Agora entre com seus dados.")
-    $("#login-form [name=email]").value = form.get("email")
-    setAuthForm("login")
-  } catch (error) { message(error.message, true) }
-})
-
-$("#forgot-form").addEventListener("submit", async event => {
-  event.preventDefault()
-  if (!validateEmailBeforeSubmit(event.currentTarget)) return
-  const email = new FormData(event.currentTarget).get("email")
-  try {
-    const data = await request("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) })
-    state.resetEmail = email
-    $("#reset-form [name=code]").focus()
-    setAuthForm("reset")
-    message(data.message || "Código enviado. Verifique seu e-mail.")
-  } catch (error) { message(error.message, true) }
-})
-
-$("#reset-form").addEventListener("submit", async event => {
-  event.preventDefault()
-  const form = new FormData(event.currentTarget)
-  try {
-    await request("/auth/reset-password", { method: "PUT", body: JSON.stringify({ email: state.resetEmail, code: form.get("code"), password: form.get("password") }) })
-    message("Senha alterada com sucesso. Entre com a nova senha.")
-    setAuthForm("login")
-  } catch (error) { message(error.message, true) }
-})
-
-$("#new-appointment-button").addEventListener("click", () => openAppointment())
-$("#refresh-button").addEventListener("click", loadAppointments)
-$("#logout-button").addEventListener("click", () => logout())
-$(".close-modal").addEventListener("click", () => modal.close())
-appointmentForm.data.addEventListener("change", () => loadSlots(appointmentForm.data.value))
-
-appointmentForm.addEventListener("submit", async event => {
-  event.preventDefault()
-  const form = new FormData(appointmentForm)
-  const id = form.get("id")
-  const payload = { nome: form.get("nome"), data: form.get("data"), hora: form.get("hora") }
-  try {
-    if (id) await request("/agendamento", { method: "PUT", body: JSON.stringify({ id, data: payload.data, hora: payload.hora }) })
-    else await request("/agendamento", { method: "POST", body: JSON.stringify(payload) })
-    modal.close(); message(id ? "Agendamento atualizado." : "Agendamento criado com sucesso."); loadAppointments()
-  } catch (error) { message(error.message, true) }
-})
-
-$("#appointments-list").addEventListener("click", async event => {
-  const edit = event.target.closest("[data-edit]")
-  const remove = event.target.closest("[data-delete]")
-  if (edit) return openAppointment(JSON.parse(decodeURIComponent(edit.dataset.edit)))
-  if (remove && confirm("Deseja excluir este agendamento?")) {
-    try { await request(`/agendamento/${remove.dataset.delete}`, { method: "DELETE" }); message("Agendamento excluído."); loadAppointments() }
-    catch (error) { message(error.message, true) }
+  if (btn.dataset.action === "delete") {
+    if (!confirm("Cancelar este agendamento?")) return;
+    try {
+      const res = await Api.deletarAgendamento(id);
+      showToast(res.message || "Agendamento cancelado.");
+      loadMine();
+    } catch (err) {
+      showToast(err.message, "error");
+    }
   }
-})
 
-if (state.token) showDashboard()
+  if (btn.dataset.action === "edit") {
+    openEditModal(id);
+  }
+});
+
+function formatDate(iso) {
+  if (!iso) return "";
+  const d = String(iso).slice(0, 10);
+  const [y, m, day] = d.split("-");
+  if (!y || !m || !day) return iso;
+  return `${day}/${m}/${y}`;
+}
+
+// ---------- EDIT MODAL ----------
+const editModal = document.getElementById("edit-modal");
+const formEdit = document.getElementById("form-edit");
+
+function openEditModal(id) {
+  formEdit.reset();
+  formEdit.id.value = id;
+  editModal.classList.remove("is-hidden");
+}
+
+document.getElementById("edit-cancel").addEventListener("click", () => {
+  editModal.classList.add("is-hidden");
+});
+
+formEdit.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = formEdit.id.value;
+  const data = formEdit.data.value;
+  const hora = formEdit.hora.value;
+
+  try {
+    const res = await Api.editarAgendamento(id, data, hora);
+    showToast(res.message || "Horário alterado.");
+    editModal.classList.add("is-hidden");
+    loadMine();
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// ---------- ADMIN ----------
+async function loadAdmin() {
+  const tbody = document.querySelector("#table-admin tbody");
+  const emptyMsg = document.getElementById("admin-empty");
+  tbody.innerHTML = "";
+  emptyMsg.classList.add("is-hidden");
+
+  try {
+    const res = await Api.getTodosAgendamentos();
+    const lista = Array.isArray(res) ? res : [];
+
+    if (lista.length === 0) {
+      emptyMsg.classList.remove("is-hidden");
+      return;
+    }
+
+    lista.forEach((item) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(item.cliente_nome)}</td>
+        <td>${escapeHtml(item.cliente_email)}</td>
+        <td>${escapeHtml(item.nome)}</td>
+        <td>${escapeHtml(formatDate(item.data))}</td>
+        <td>${escapeHtml(item.hora)}</td>`;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+}
+
+// ---------- INIT ----------
+refreshAuthUI();

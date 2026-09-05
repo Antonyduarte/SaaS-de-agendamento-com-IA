@@ -1,5 +1,5 @@
 const loginService = require("./login.service")
-const apiRes = require("../../../utils/apiRes")
+const apiRes = require("../../../utils/response/apiRes")
 const { MESSAGES } = require("../../../messages/messages")
 
 async function login(req, res) {

@@ -1,188 +1,218 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#5b5ce2">
-    <title>AgendaFlow — Agendamentos simples</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-  </head>
-  <body>
-    <div class="ambient ambient-one"></div>
-    <div class="ambient ambient-two"></div>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadência — sistema de agendamentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
 
-    <main class="shell">
-      <section id="auth-view" class="auth-layout">
-        <article class="brand-panel">
-          <a class="logo" href="#"><span>✦</span> AgendaFlow</a>
+<div class="board">
 
-          <div class="hero-copy">
-            <p class="eyebrow">ORGANIZE O QUE IMPORTA</p>
-            <h1>Seu tempo merece <em>leveza.</em></h1>
-            <p>Uma agenda simples, bonita e feita para deixar sua rotina no controle.</p>
-          </div>
+  <!-- SPINE / NAV -->
+  <aside class="spine">
+    <div class="spine__brand">
+      <span class="spine__mark">C</span>
+      <span class="spine__name">Cadência</span>
+    </div>
 
-          <div class="feature">
-            <span>✓</span>
-            <div>
-              <strong>Agenda sem conflitos</strong>
-              <small>Horários protegidos automaticamente.</small>
-            </div>
-          </div>
-        </article>
+    <nav class="spine__nav" id="nav-logged-out">
+      <button class="nav-link is-active" data-view="login">Entrar</button>
+      <button class="nav-link" data-view="register">Cadastrar</button>
+      <button class="nav-link" data-view="forgot">Recuperar senha</button>
+    </nav>
 
-        <section class="auth-card">
-          <div class="auth-heading">
-            <p class="eyebrow">BEM-VINDO</p>
-            <h2 id="auth-title">Entre na sua conta</h2>
-            <p id="auth-subtitle">Acesse sua agenda e acompanhe seus horários.</p>
-          </div>
+    <nav class="spine__nav is-hidden" id="nav-logged-in">
+      <button class="nav-link is-active" data-view="book">Agendar horário</button>
+      <button class="nav-link" data-view="mine">Meus horários</button>
+      <button class="nav-link is-hidden" data-view="admin" id="nav-admin">Painel geral</button>
+    </nav>
 
-          <div class="tabs" role="tablist">
-            <button class="tab active" data-auth="login">Entrar</button>
-            <button class="tab" data-auth="register">Criar conta</button>
-          </div>
+    <div class="spine__foot">
+      <div class="whoami is-hidden" id="whoami"></div>
+      <button class="link-out is-hidden" id="btn-logout">Sair</button>
+    </div>
+  </aside>
 
-          <form id="login-form" class="form" novalidate>
-            <label>
-              E-mail
-              <input type="email" name="email" placeholder="voce@email.com" required autocomplete="off" >
-            </label>
-            <label>
-              Senha
-              <div class="password-field">
-                <input type="password" name="senha" placeholder="Sua senha" required autocomplete="off">
-                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
-              </div>
-            </label>
-            <button type="button" class="text-button" data-view="forgot">Esqueci minha senha</button>
-            <button class="primary-button" type="submit">Entrar <span>→</span></button>
-          </form>
+  <!-- MAIN -->
+  <main class="page">
 
-          <form id="register-form" class="form hidden" novalidate>
-            <label>
-              Nome completo
-              <input type="text" name="nome" placeholder="Como podemos te chamar?" required autocomplete="off" >
-            </label>
-            <label>
-              E-mail
-              <input type="email" name="email" placeholder="voce@email.com" required autocomplete="off">
-            </label>
-            <label>
-              Senha
-              <div class="password-field">
-                <input type="password" name="senha" placeholder="Crie uma senha segura" required minlength="6" autocomplete="off">
-                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
-              </div>
-            </label>
-            <button class="primary-button" type="submit">Criar minha conta <span>→</span></button>
-          </form>
+    <div class="page__toast" id="toast" role="status" aria-live="polite"></div>
 
-          <form id="forgot-form" class="form hidden" novalidate>
-            <button type="button" class="back-button" data-view="login">← Voltar para entrar</button>
-            <label>
-              E-mail cadastrado
-              <input type="email" name="email" placeholder="seuemail@email.com" required autocomplete="off">
-            </label>
-            <button class="primary-button" type="submit">Enviar código <span>→</span></button>
-          </form>
-
-          <form id="reset-form" class="form hidden">
-            <button type="button" class="back-button" data-view="login">← Voltar para entrar</button>
-            <p class="form-hint">Enviamos um código de 6 dígitos. Use o último código solicitado.</p>
-            <label>
-              Código de recuperação
-              <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required>
-            </label>
-            <label>
-              Nova senha
-              <div class="password-field">
-                <input type="password" name="password" placeholder="Sua nova senha" required minlength="6" autocomplete="off">
-                <button type="button" class="toggle-password" aria-label="Mostrar senha">◉</button>
-              </div>
-            </label>
-            <button class="primary-button" type="submit">Redefinir senha <span>→</span></button>
-          </form>
-        </section>
-      </section>
-
-      <section id="dashboard-view" class="dashboard hidden">
-        <header class="dashboard-header">
-          <a class="logo" href="#"><span>✦</span> AgendaFlow</a>
-          <div class="header-actions">
-            <span id="today-label"></span>
-            <a id="admin-button" class="outline-button hidden" href="/admin.html">Administração</a>
-            <button id="logout-button" class="outline-button">Sair</button>
-          </div>
-        </header>
-
-        <div class="dashboard-intro">
-          <div>
-            <p class="eyebrow">MINHA ROTINA</p>
-            <h1>Olá! Vamos organizar<br>o seu <em>dia?</em></h1>
-          </div>
-          <button id="new-appointment-button" class="primary-button">+ Novo agendamento</button>
-        </div>
-
-        <section class="dashboard-grid">
-          <article class="appointments-card">
-            <div class="card-heading">
-              <div>
-                <h2>Seus agendamentos</h2>
-                <p id="appointments-count">Carregando agenda...</p>
-              </div>
-              <button id="refresh-button" class="icon-button" title="Atualizar">↻</button>
-            </div>
-            <div id="appointments-list" class="appointments-list"></div>
-          </article>
-
-          <aside class="tips-card">
-            <span class="tip-icon">✦</span>
-            <h3>Seu tempo, do seu jeito.</h3>
-            <p>Os horários têm um intervalo de 35 minutos para que sua agenda fique sempre equilibrada.</p>
-            <div class="tip-line"></div>
-            <small>Disponível de 09:00 às 18:00</small>
-          </aside>
-        </section>
-      </section>
-    </main>
-
-    <dialog id="appointment-modal" class="modal">
-      <form id="appointment-form" class="modal-card">
-        <div class="modal-heading">
-          <div>
-            <p class="eyebrow" id="modal-eyebrow">NOVO HORÁRIO</p>
-            <h2 id="modal-title">Adicionar agendamento</h2>
-          </div>
-          <button type="button" class="close-modal" aria-label="Fechar">×</button>
-        </div>
-
-        <input type="hidden" name="id">
-        <label>
-          Descrição
-          <input name="nome" placeholder="Ex.: Reunião de alinhamento" required>
+    <!-- LOGIN -->
+    <section class="view is-active" data-view="login">
+      <header class="view__head">
+        <p class="eyebrow">Bem-vindo(a) de volta</p>
+        <h1>Entrar na sua agenda</h1>
+      </header>
+      <form class="panel form" id="form-login" novalidate>
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" name="email" required autocomplete="email">
         </label>
-        <div class="form-row">
-          <label>
-            Data
-            <input type="date" name="data" required>
-          </label>
-          <label>
-            Horário
-            <select name="hora" required>
-              <option value="">Escolha</option>
-            </select>
-          </label>
-        </div>
-        <p id="slot-help" class="form-hint">Escolha uma data para ver os horários livres.</p>
-        <button class="primary-button" type="submit">Salvar agendamento <span>→</span></button>
+        <label class="field">
+          <span>Senha</span>
+          <input type="password" name="senha" required autocomplete="current-password">
+        </label>
+        <button class="btn btn--primary" type="submit">Entrar</button>
       </form>
-    </dialog>
+    </section>
 
-    <div id="toast" class="toast" role="status"></div>
-    <script src="js/app.js"></script>
-  </body>
+    <!-- REGISTER -->
+    <section class="view" data-view="register">
+      <header class="view__head">
+        <p class="eyebrow">Primeira vez aqui</p>
+        <h1>Criar sua conta</h1>
+      </header>
+      <form class="panel form" id="form-register" novalidate>
+        <label class="field">
+          <span>Nome</span>
+          <input type="text" name="nome" required autocomplete="name">
+        </label>
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" name="email" required autocomplete="email">
+        </label>
+        <label class="field">
+          <span>Senha</span>
+          <input type="password" name="senha" required autocomplete="new-password" minlength="6">
+        </label>
+        <button class="btn btn--primary" type="submit">Criar conta</button>
+      </form>
+    </section>
+
+    <!-- FORGOT PASSWORD -->
+    <section class="view" data-view="forgot">
+      <header class="view__head">
+        <p class="eyebrow">Esqueceu a senha</p>
+        <h1>Solicitar código de recuperação</h1>
+      </header>
+      <form class="panel form" id="form-forgot" novalidate>
+        <label class="field">
+          <span>E-mail cadastrado</span>
+          <input type="email" name="email" required autocomplete="email">
+        </label>
+        <button class="btn btn--primary" type="submit">Enviar código</button>
+      </form>
+
+      <header class="view__head view__head--tight">
+        <p class="eyebrow">Já tem um código</p>
+        <h2>Definir nova senha</h2>
+      </header>
+      <form class="panel form" id="form-reset" novalidate>
+        <label class="field">
+          <span>E-mail</span>
+          <input type="email" name="email" required autocomplete="email">
+        </label>
+        <label class="field">
+          <span>Código recebido</span>
+          <input type="text" name="code" required inputmode="numeric" pattern="[0-9]*">
+        </label>
+        <label class="field">
+          <span>Nova senha</span>
+          <input type="password" name="password" required autocomplete="new-password" minlength="6">
+        </label>
+        <button class="btn btn--primary" type="submit">Alterar senha</button>
+      </form>
+    </section>
+
+    <!-- BOOK APPOINTMENT -->
+    <section class="view" data-view="book">
+      <header class="view__head">
+        <p class="eyebrow">Novo compromisso</p>
+        <h1>Escolha o dia e o horário</h1>
+      </header>
+
+      <form class="panel form form--book" id="form-book" novalidate>
+        <label class="field">
+          <span>Nome do compromisso</span>
+          <input type="text" name="nome" placeholder="Ex.: Corte de cabelo, Consulta..." required>
+        </label>
+        <label class="field">
+          <span>Data</span>
+          <input type="date" name="data" id="book-date" required>
+        </label>
+
+        <div class="field">
+          <span>Horários disponíveis</span>
+          <div class="board-strip" id="slot-board">
+            <p class="board-strip__hint">Escolha uma data para ver os horários.</p>
+          </div>
+        </div>
+
+        <input type="hidden" name="hora" id="book-hora">
+        <button class="btn btn--primary" type="submit" id="book-submit" disabled>Confirmar agendamento</button>
+      </form>
+    </section>
+
+    <!-- MY APPOINTMENTS -->
+    <section class="view" data-view="mine">
+      <header class="view__head">
+        <p class="eyebrow">Sua agenda</p>
+        <h1>Meus horários</h1>
+      </header>
+      <div class="panel">
+        <div class="ledger-wrap">
+          <table class="ledger" id="table-mine">
+            <thead>
+              <tr><th>Nome</th><th>Data</th><th>Hora</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="ledger__empty is-hidden" id="mine-empty">Nenhum agendamento por aqui ainda.</p>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section class="view view--wide" data-view="admin">
+      <header class="view__head">
+        <p class="eyebrow">Visão geral</p>
+        <h1>Todos os agendamentos</h1>
+      </header>
+      <div class="panel">
+        <div class="ledger-wrap">
+          <table class="ledger" id="table-admin">
+            <thead>
+              <tr><th>Cliente</th><th>E-mail</th><th>Compromisso</th><th>Data</th><th>Hora</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="ledger__empty is-hidden" id="admin-empty">Nenhum agendamento registrado.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal is-hidden" id="edit-modal">
+  <div class="modal__panel">
+    <h2>Alterar horário</h2>
+    <form id="form-edit" novalidate>
+      <input type="hidden" name="id">
+      <label class="field">
+        <span>Nova data</span>
+        <input type="date" name="data" required>
+      </label>
+      <label class="field">
+        <span>Novo horário</span>
+        <input type="time" name="hora" required>
+      </label>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--ghost" id="edit-cancel">Cancelar</button>
+        <button type="submit" class="btn btn--primary">Salvar alteração</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
 </html>
