@@ -24,7 +24,7 @@ async function userLogin(email, senha) {
         name: user.nome,
         email: user.email,
         role: user.role
-    }, process.env.SECRET_KEY, { expiresIn: "7d" })
+    }, process.env.SECRET_KEY, { expiresIn: "1h" })
 
     return token
 }
