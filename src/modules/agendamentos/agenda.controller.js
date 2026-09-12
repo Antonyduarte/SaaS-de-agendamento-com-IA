@@ -4,12 +4,12 @@ const { MESSAGES } = require("../../messages/messages")
 const { HORA_REGEX, DATA_REGEX } = require("../../utils/regex/regex")
 
 async function agendar(req, res) {
-    const { nome, data, hora } = req.body
+    const { compromisso, data, hora } = req.body
 
     const horaValida = HORA_REGEX.test(hora)
     const dataValida = DATA_REGEX.test(data)
 
-    if (!nome || !data || !hora) {
+    if (!compromisso || !data || !hora) {
         return res.status(400).json(apiRes.apiResponse(
             false,
             MESSAGES.EMPTY_DATA_MSG // Certifique-se de preencher todos os campos
@@ -31,7 +31,7 @@ async function agendar(req, res) {
     const user_id = req.user.id
 
     try {
-        let create = await agendaService.agendar(user_id, nome, data, hora)
+        let create = await agendaService.agendar(user_id, compromisso, data, hora)
 
         return res.status(201).json(apiRes.apiResponse(
             true,

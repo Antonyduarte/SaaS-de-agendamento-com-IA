@@ -7,7 +7,7 @@ const INICIO_EXPEDIENTE = "09:00:00"
 const FIM_EXPEDIENTE = "18:00:00"
 
 // POST agenda
-async function agendar(user_id, nome, data, hora) {
+async function agendar(user_id, compromisso, data, hora) {
     
     const horarioExiste = await agendaRepo.horarioVerify(
         data,
@@ -19,7 +19,7 @@ async function agendar(user_id, nome, data, hora) {
         throw new Error(MESSAGES.TIME_CONFLICT)
     }
 
-    const create = await agendaRepo.agendar(user_id, nome, data, hora)
+    const create = await agendaRepo.agendar(user_id, compromisso, data, hora)
 
     return create
 }
@@ -82,6 +82,15 @@ async function admDeleteAgenda(id){
 
 }
 
+async function expireAppointments() {
+
+    // await agendaRepo.findExpiredAppointments
+
+    await agendaRepo.updateStatus()
+
+    return true
+}
+
 module.exports = { 
     agendar, 
     getHorariosDisponiveis, 
@@ -89,5 +98,6 @@ module.exports = {
     getAllAgenda, 
     deleteAgenda, 
     editAgenda,
-    admDeleteAgenda 
+    admDeleteAgenda,
+    expireAppointments
 }

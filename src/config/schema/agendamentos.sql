@@ -1,7 +1,7 @@
 CREATE TABLE `agendamentos` (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`user_id` INT UNSIGNED NOT NULL,
-	`nome` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8mb4_0900_ai_ci',
+	`compromisso` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8mb4_0900_ai_ci',
 	`data` DATE NOT NULL,
 	`hora` TIME NOT NULL,
 	`created_at` TIMESTAMP NOT NULL DEFAULT (now()),

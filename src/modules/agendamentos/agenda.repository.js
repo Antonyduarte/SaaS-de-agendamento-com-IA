@@ -5,9 +5,9 @@ const connection = pool
 
 // POST - AGENDAR HORARIO
 
-async function agendar(user_id, nome, data, hora) {
+async function agendar(user_id, compromisso, data, hora) {
 
-    let [result] = await connection.query("INSERT INTO agendamentos (user_id, nome, data, hora) VALUES(?, ?, ?, ?)", [user_id, nome, data, hora])
+    let [result] = await connection.query("INSERT INTO agendamentos (user_id, compromisso, data, hora) VALUES(?, ?, ?, ?)", [user_id, compromisso, data, hora])
 
     return result[0] || null
 }
@@ -44,7 +44,7 @@ async function horarioVerify(data, hora, intervaloMinutos, agendamentoId = null)
 // GET - VER AGENDAMENTOS
 
 async function getAgenda(user_id) {
-    let [result] = await connection.query("SELECT user_id, id, nome, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
+    let [result] = await connection.query("SELECT user_id, id, compromisso, data, hora FROM agendamentos WHERE user_id = ?", [user_id])
 
     return result
 }
@@ -53,7 +53,7 @@ async function getAllAgenda() {
     const [result] = await connection.query(`
         SELECT
             agendamentos.id,
-            agendamentos.nome,
+            agendamentos.compromisso,
             agendamentos.data,
             agendamentos.hora,
             clientes.id AS user_id,
@@ -136,6 +136,21 @@ async function admDeleteAgenda(id) {
 
 }
 
+async function findExpiredAppointments() {
+    
+    const [result] = await connection.query("SELECT *, DATE_ADD(CONCAT(data, ' ', hora), INTERVAL 35 MINUTE) AS horario_expiracao FROM agendamentos WHERE DATE_ADD(CONCAT(data, ' ', hora), INTERVAL 35 MINUTE) < NOW()")
+
+    return result
+
+}
+async function updateStatus() {
+
+    const [rows] = await connection.query("UPDATE agendamentos SET status = 'EXPIRED' WHERE DATE_ADD(CONCAT(data, ' ', hora), INTERVAL 35 MINUTE) < NOW() AND status IN ('PENDING', 'CONFIRMED')")
+
+    return rows
+
+}
+
 module.exports = {
     agendar,
     horarioVerify,
@@ -144,5 +159,7 @@ module.exports = {
     deleteAgenda,
     editAgenda,
     getHorariosDisponiveis,
-    admDeleteAgenda
+    admDeleteAgenda,
+    findExpiredAppointments,
+    updateStatus,
 }
