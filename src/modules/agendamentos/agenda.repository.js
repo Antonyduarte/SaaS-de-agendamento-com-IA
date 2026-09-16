@@ -1,5 +1,6 @@
 const mysql = require("mysql2")
 const pool = require("../../config/db/db")
+const { MESSAGES } = require("../../messages/messages")
 
 const connection = pool
 
@@ -7,10 +8,15 @@ const connection = pool
 
 async function agendar(user_id, compromisso, data, hora) {
 
-    let [result] = await connection.query("INSERT INTO agendamentos (user_id, compromisso, data, hora) VALUES(?, ?, ?, ?)", [user_id, compromisso, data, hora])
+    let [result] = await connection.query("INSERT INTO agendamentos (user_id, compromisso, data, hora) SELECT ?, ?, ?, ? WHERE TIMESTAMP (?, ?) > NOW()", [user_id, compromisso, data, hora, data, hora])
 
-    return result[0] || null
+    if (result.affectedRows === 0) {
+        throw Error(MESSAGES.INVALID_DATA)
+    }
+
+    return result
 }
+
 async function horarioVerify(data, hora, intervaloMinutos, agendamentoId = null) {
     const parametros = [
         data,

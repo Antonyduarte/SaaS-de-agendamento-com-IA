@@ -38,8 +38,12 @@ async function agendar(req, res) {
             "Horário agendado com sucesso"
         ))
     } catch (error) {
-        console.error(error);
-
+        if(error.message === MESSAGES.INVALID_DATA) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                MESSAGES.INVALID_DATA
+            ))
+        }
         if (error.message === MESSAGES.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,

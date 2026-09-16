@@ -9,5 +9,4 @@ node_modules
 *.md
 !README.md
 
-#Temporaily ignore public !!
 public
