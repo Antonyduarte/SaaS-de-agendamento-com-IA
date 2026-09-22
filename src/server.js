@@ -9,4 +9,4 @@ app.listen(PORT, () => {
     console.log(`Server running in port: ${PORT}`)
 })
 
-job.expiredAppointmens()
+job.expiredAppointments()

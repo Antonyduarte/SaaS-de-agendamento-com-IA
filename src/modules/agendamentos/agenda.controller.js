@@ -47,7 +47,7 @@ async function agendar(req, res) {
         if (error.message === MESSAGES.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
+                MESSAGES.UNVAILABLE_DATA
             ))
         } else {
             return res.status(500).json(apiRes.apiResponse(
@@ -97,7 +97,7 @@ async function getAgenda(req, res) {
         if (agenda.length === 0) {
             return res.status(200).json(apiRes.apiResponse(
                 true,
-                "Nenhum registro encontrado"
+                MESSAGES.FOUND_REGISTER_FALSE
             ))
         }
 
@@ -133,7 +133,7 @@ async function deleteAgenda(req, res) {
         if (result.affectedRows === 0) {
             return res.status(404).json(apiRes.apiResponse(
                 false,
-                "Nenhum registro encontrado",
+                MESSAGES.FOUND_REGISTER_FALSE,
                 null
             ))
         }
@@ -181,28 +181,28 @@ async function editAgenda(req, res) {
 
         const result = await agendaService.editAgenda(data, hora, id, user_id)
 
-        if (result.affectedRows <= 0) {
+        if (result.length <= 0) {
             return res.status(404).json(apiRes.apiResponse(
                 false,
-                "Agendamento não encontrado",
+                MESSAGES.DATA_NOT_FOUND,
                 null
             ))
         } return res.status(200).json(apiRes.apiResponse(
             true,
-            "Horário alterado com sucesso"
+            MESSAGES.EDIT_DATA_TRUE
         ))
 
     } catch (error) {
         if (error.message === MESSAGES.TIME_CONFLICT) {
             return res.status(400).json(apiRes.apiResponse(
                 false,
-                "Horário indisponível: mantenha pelo menos 35 minutos entre agendamentos"
+                MESSAGES.UNVAILABLE_DATA
             ))
         }
 
         return res.status(500).json(apiRes.apiResponse(
             false,
-            MESSAGES.INTERNAL_ERROR_MSG
+            error.message
         ))
     }
 }

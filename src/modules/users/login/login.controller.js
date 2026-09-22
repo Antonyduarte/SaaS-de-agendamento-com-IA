@@ -7,7 +7,7 @@ async function login(req, res) {
         const { email, senha } = req.body
 
         if (!email || !senha) {
-            return res.status(400).json(apiRes.userResponse(
+            return res.status(400).json(apiRes.apiResponse(
                 false,
                 "Email e senha são obrigatórios"
             ))

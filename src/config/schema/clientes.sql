@@ -1,15 +1,12 @@
-CREATE TABLE `clientes` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`nome` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
-	`email` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
-	`role` ENUM('user','admin') NOT NULL DEFAULT 'user' COLLATE 'utf8mb4_0900_ai_ci',
-	`password` VARCHAR(550) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
-	`created_at` TIMESTAMP NOT NULL DEFAULT (now()),
-	`modified_at` TIMESTAMP NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`) USING BTREE,
-	UNIQUE INDEX `email` (`email`) USING BTREE
-)
-COLLATE='utf8mb4_0900_ai_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=7
-;
+CREATE TABLE
+	`clientes` (
+		`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+		`nome` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+		`email` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+		`role` ENUM ('user', 'admin') NOT NULL DEFAULT 'user' COLLATE 'utf8mb4_0900_ai_ci',
+		`password` VARCHAR(550) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+		`created_at` TIMESTAMP NOT NULL DEFAULT (now ()),
+		`modified_at` TIMESTAMP NOT NULL DEFAULT (now ()) ON UPDATE CURRENT_TIMESTAMP,
+		PRIMARY KEY (`id`) USING BTREE,
+		UNIQUE INDEX `email` (`email`) USING BTREE
+	) COLLATE = 'utf8mb4_0900_ai_ci' ENGINE = InnoDB AUTO_INCREMENT = 7;

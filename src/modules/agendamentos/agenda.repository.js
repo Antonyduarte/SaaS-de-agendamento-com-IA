@@ -85,12 +85,20 @@ async function deleteAgenda(id, user_id) {
 
 async function editAgenda(data, hora, id, user_id) {
 
-    let [result] = await connection.query("UPDATE agendamentos SET data = ?, hora = ? WHERE id = ? AND user_id = ?", [data, hora, id, user_id])
+    let [result] = await connection.query(`UPDATE agendamentos
+     SET data = ?, hora = ?
+     WHERE id = ?
+     AND user_id = ?
+     AND TIMESTAMP(CONCAT(?, ' ', ?)) > NOW()`, [data, hora, id, user_id, data, hora])
+
+    if (result.affectedRows === 0) {
+        throw Error(MESSAGES.INVALID_DATA)
+    }
 
     return result
 }
 
-// GET - lista slots livres sem expor os agendamentos existentes.
+// GET - lista slots livres sem expor os agendamentos existentes
 async function getHorariosDisponiveis(data, intervaloMinutos, inicioExpediente, fimExpediente) {
     const query = `
         WITH RECURSIVE horarios AS (
@@ -143,7 +151,7 @@ async function admDeleteAgenda(id) {
 }
 
 async function findExpiredAppointments() {
-    
+
     const [result] = await connection.query("SELECT *, DATE_ADD(CONCAT(data, ' ', hora), INTERVAL 35 MINUTE) AS horario_expiracao FROM agendamentos WHERE DATE_ADD(CONCAT(data, ' ', hora), INTERVAL 35 MINUTE) < NOW()")
 
     return result
