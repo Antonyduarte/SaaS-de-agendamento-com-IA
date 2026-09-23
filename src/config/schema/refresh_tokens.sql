@@ -1,0 +1,13 @@
+CREATE TABLE refresh_tokens (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id INT UNSIGNED NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    FOREIGN KEY (user_id)
+        REFERENCES clientes(id)
+        ON DELETE CASCADE
+);

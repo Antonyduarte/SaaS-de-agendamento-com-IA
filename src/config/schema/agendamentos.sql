@@ -16,5 +16,7 @@ CREATE TABLE
         'CANCELED',
         'EXPIRED'
       ) DEFAULT 'PENDING',
-      PRIMARY KEY (`id`) USING BTREE
-  ) ENGINE = InnoDB AUTO_INCREMENT = 46 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
+      PRIMARY KEY (`id`) USING BTREE,
+      KEY `fk_agendamentos_cliente` (`user_id`),
+      CONSTRAINT `fk_agendamentos_cliente` FOREIGN KEY (`user_id`) REFERENCES `clientes` (`id`) ON DELETE CASCADE
+  ) ENGINE = InnoDB AUTO_INCREMENT = 47 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
