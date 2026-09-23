@@ -5,6 +5,12 @@ const { MESSAGES } = require("../../../messages/messages")
 async function register(req, res) {
     try {
         const { nome, email, senha } = req.body
+        if (senha.length < 8) {
+            return res.status(400).json(apiRes.apiResponse(
+                false,
+                MESSAGES.INVALID_PASSWORD
+            ))
+        }
 
         const newUser = await registerService(nome, email, senha)
 

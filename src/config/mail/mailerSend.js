@@ -13,7 +13,7 @@ async function sendCode(userMail, code) {
 //   from: process.env.MAIL_USER,
 //   to: "antonyrafael3214@gmail.com",
 //   subject: "Teste",
-//   text: "Deu certo esse carai",
+//   text: "Seu código de verificação é ${code}",
 // });
 
 module.exports = { sendCode }
