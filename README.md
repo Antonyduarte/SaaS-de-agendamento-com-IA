@@ -672,6 +672,7 @@ Antes de utilizar a aplicação em produção, ainda é necessário implementar 
 * [x] Pool de conexão MySQL
 * [x] Servir arquivos estáticos pelo Express
 * [x] Separação em routes, controllers, services e repositories
+* [x] Refresh Token
 
 ### Em desenvolvimento
 
