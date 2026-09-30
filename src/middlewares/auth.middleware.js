@@ -31,10 +31,7 @@ function authMiddleware(req, res, next) {
     }
 
     try { // Verifica e decodifica o token
-        const decoded = jwt.verify(
-            token,
-            process.env.SECRET_KEY
-        )
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
         //salva os dados do usuario na requisição
         req.user = decoded
 

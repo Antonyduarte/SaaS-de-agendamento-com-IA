@@ -29,7 +29,11 @@ const MESSAGES = {
     UNVAILABLE_CODE: "Código expirado ou inválido",
     PASSWORD_ALTERED: "Senha alterada com sucesso",
     //MENSAGENS DE AGENDAMENTO
-    DELETED_DATA: "Deletado com sucesso"
+    DELETED_DATA: "Deletado com sucesso",
+    //REFRESH TOKEN 201 GERADO COM SUCESSO
+    REFRESH_TOKEN_TRUE: "Tokens renovados com sucesso",
+    INVALID_REFRESH_TOKEN: "Refresh token inválido",
+    EXPIRED_REFRESH_TOKEN: "Refresh token expirado"
 }
 
 module.exports = { MESSAGES }

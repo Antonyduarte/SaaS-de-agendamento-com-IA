@@ -4,6 +4,10 @@ const pool = require("../../../config/db/db")
 const connection = pool
 
 async function findByEmail(email) {
+    if (typeof email !== "string") {
+        throw new TypeError("Email deve ser uma string")
+    }
+
     const [result] = await connection.query("SELECT * FROM clientes WHERE email = ?", [email])
 
     return result[0]
